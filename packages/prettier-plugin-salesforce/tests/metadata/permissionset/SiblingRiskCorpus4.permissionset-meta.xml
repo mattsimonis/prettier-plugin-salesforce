@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- permissionset corpus4 -->
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+  <applicationVisibilities>
+    <application>Widget_App</application>
+    <default>false</default>
+    <visible>true</visible>
+  </applicationVisibilities>
+  <!-- between app and classes -->
+  <classAccesses/>
+  <fieldPermissions>
+    <editable>true</editable>
+    <field>Widget__c.Score__c</field>
+    <readable>true</readable>
+  </fieldPermissions>
+  <!-- between field and tabs -->
+  <tabSettings/>
+</PermissionSet>

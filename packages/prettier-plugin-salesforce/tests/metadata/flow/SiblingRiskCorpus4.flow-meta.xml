@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- flow corpus4 -->
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+  <apiVersion>61.0</apiVersion>
+  <!-- before assignment -->
+  <assignments/>
+  <processType>AutoLaunchedFlow</processType>
+  <!-- before status -->
+  <status/>
+</Flow>

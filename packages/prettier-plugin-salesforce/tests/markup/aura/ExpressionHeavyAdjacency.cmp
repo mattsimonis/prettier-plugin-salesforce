@@ -1,0 +1,1 @@
+<aura:component><aura:if isTrue="{!v.showRows}"><aura:html tag="span"/><p>{!  v.label + ' / ' + v.suffix  }</p><aura:unescapedHtml value="{!v.content}"/><aura:text>{!v.footerText}</aura:text></aura:if></aura:component>

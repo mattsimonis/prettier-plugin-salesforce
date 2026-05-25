@@ -1,0 +1,3 @@
+<aura:interface extends="force:hasRecordId">
+<aura:attribute name="recordId" type="Id"/>
+</aura:interface>

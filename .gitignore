@@ -1,0 +1,14 @@
+node_modules/
+corpus/
+project-pack/
+.release-evidence/
+
+.DS_Store
+*.log
+
+.env
+.env.*
+
+coverage/
+**/coverage/
+**/dist/

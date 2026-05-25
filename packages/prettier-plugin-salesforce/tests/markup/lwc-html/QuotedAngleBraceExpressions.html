@@ -1,0 +1,13 @@
+<template>
+  <template if:true={  showPanel  } for:each={  rowsByGroup [ groupKey ]  } for:item="row">
+    <button
+      key={  row.Id  }
+      title={ showPanel ? 'x > y {z}' : '{none} >= y' }
+      onclick={  handlePick( row.Id )  }
+      onkeydown={  handleKeyDown( row.Id )  }
+    >
+      { showPanel ? 'x > y { z }' : '{ none } >= y' }
+    </button>
+    <lightning-badge label={row.Badge}/>
+  </template>
+</template>

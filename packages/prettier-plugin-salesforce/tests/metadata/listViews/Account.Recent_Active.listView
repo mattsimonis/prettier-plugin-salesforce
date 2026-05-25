@@ -1,0 +1,1 @@
+<ListView><columns>Name</columns><columns>Type</columns><columns>Website</columns><filterScope>Everything</filterScope><filters><field>IsActive__c</field><operation>equals</operation><value>true</value></filters><fullName>Account.Recent_Active</fullName><label>Recent Active</label></ListView>

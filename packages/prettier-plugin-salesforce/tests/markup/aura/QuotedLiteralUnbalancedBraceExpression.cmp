@@ -1,0 +1,1 @@
+<aura:component><aura:if isTrue="{!v.show}"><aura:html tag="span"/><p>{!  v.show ? 'left {' : 'right'  }</p></aura:if></aura:component>

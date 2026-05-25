@@ -1,0 +1,1 @@
+<apex:page><apex:outputPanel><apex:outputText value="A > B"/><span>{!  Account.Owner.Name  }</span><apex:outputField value="{!Account.Number}"/></apex:outputPanel></apex:page>

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prettier Salesforce Playground</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='18' fill='%231b2559'/%3E%3Ccircle cx='28' cy='28' r='8' fill='%23ea5f6f'/%3E%3Ccircle cx='52' cy='28' r='8' fill='%23f7b93e'/%3E%3Ccircle cx='76' cy='28' r='8' fill='%2356b3b4'/%3E%3Ccircle cx='100' cy='28' r='8' fill='%23bf85bf'/%3E%3Cpath d='M26 52h76v14H26zm0 22h54v14H26z' fill='white'/%3E%3C/svg%3E" />
+    <script type="module" src="./src/main.js"></script>
+  </head>
+  <body class="min-h-screen bg-[#080b16] text-slate-100 antialiased">
+    <div class="min-h-screen overflow-hidden">
+      <header class="border-b border-white/10 bg-[#0d1224]/95 backdrop-blur">
+        <div class="mx-auto flex max-w-[1600px] items-center justify-between gap-5 px-4 py-2.5 sm:px-5">
+          <div class="flex min-w-0 items-center gap-3 sm:gap-4">
+            <div class="prettier-mark" aria-hidden="true">
+              <span class="bg-[#ea5f6f]"></span>
+              <span class="bg-[#f7b93e]"></span>
+              <span class="bg-[#56b3b4]"></span>
+              <span class="bg-[#bf85bf]"></span>
+            </div>
+            <div class="min-w-0">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">prettier-plugin-salesforce</p>
+              <h1 class="text-lg font-semibold leading-tight text-white">Salesforce formatting playground</h1>
+            </div>
+          </div>
+          <div class="hidden items-center gap-2 md:flex">
+            <span id="statusBadge" class="status-pill">Ready</span>
+            <span id="routeBadge" class="status-pill font-mono">route: apex</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="mx-auto flex min-h-[calc(100vh-73px)] max-w-[1600px] flex-col gap-3 px-4 py-3 sm:px-5">
+        <section class="workspace min-h-0">
+          <div class="control-rail">
+            <label class="min-w-0 flex-1">
+              <span class="control-label">Example</span>
+              <select id="sampleSelect" class="control-input"></select>
+            </label>
+            <input id="filepathInput" type="hidden" value="force-app/main/default/classes/Example.cls" />
+            <button id="formatButton" class="primary-button" type="button">Format</button>
+          </div>
+
+          <details class="tool-drawer">
+            <summary>Config options</summary>
+            <div class="drawer-grid">
+              <section class="drawer-section">
+                <h2 class="drawer-heading">Options</h2>
+                <div class="config-control-grid">
+                  <label>
+                    <span class="control-label">Print width</span>
+                    <input id="printWidthInput" class="control-input" type="number" min="20" max="240" step="1" />
+                  </label>
+                  <label>
+                    <span class="control-label">Tab width</span>
+                    <input id="tabWidthInput" class="control-input" type="number" min="1" max="12" step="1" />
+                  </label>
+                  <label>
+                    <span class="control-label">Trailing comma</span>
+                    <select id="trailingCommaSelect" class="control-input">
+                      <option value="none">none</option>
+                      <option value="es5">es5</option>
+                      <option value="all">all</option>
+                    </select>
+                  </label>
+                  <label class="toggle-pill config-toggle">
+                    <input id="useTabsToggle" type="checkbox" />
+                    <span>Use tabs</span>
+                  </label>
+                  <label class="toggle-pill config-toggle">
+                    <input id="singleQuoteToggle" type="checkbox" />
+                    <span>Single quotes</span>
+                  </label>
+                  <label class="toggle-pill config-toggle">
+                    <input id="bracketSameLineToggle" type="checkbox" />
+                    <span>Bracket same line</span>
+                  </label>
+                  <label class="toggle-pill config-toggle config-toggle-wide">
+                    <input id="sortLabelsToggle" type="checkbox" />
+                    <span>Sort labels by fullName</span>
+                  </label>
+                </div>
+              </section>
+
+              <section class="drawer-section drawer-section-wide">
+                <div class="drawer-heading-row">
+                  <h2 class="drawer-heading">Config JSON</h2>
+                  <button id="resetConfigButton" class="ghost-button" type="button">Reset</button>
+                </div>
+                <div class="config-grid">
+                  <label>
+                    <span class="control-label">Options merged into Prettier</span>
+                    <div id="configEditor" class="editor-shell editor-shell-small" data-editor="config"></div>
+                  </label>
+                  <div class="config-help">
+                    <p>Parsed as JSON and passed into `prettier.format`. The sample path controls parser routing; runtime keys like `parser`, `filepath`, and `plugins` stay under playground control.</p>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </details>
+
+          <div class="pane-grid min-h-0">
+            <section class="code-panel">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-kicker">Source</p>
+                  <h2>Input</h2>
+                </div>
+                <button id="clearButton" class="ghost-button" type="button">Clear</button>
+              </div>
+              <div id="inputEditor" class="editor-shell" data-editor="input"></div>
+            </section>
+            <section class="code-panel">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-kicker">Formatted</p>
+                  <h2>Output</h2>
+                </div>
+                <button id="copyButton" class="ghost-button" type="button">Copy</button>
+              </div>
+              <div id="outputEditor" class="editor-shell" data-editor="output"></div>
+            </section>
+          </div>
+
+          <pre id="errorPane" class="error-pane" aria-live="polite"></pre>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

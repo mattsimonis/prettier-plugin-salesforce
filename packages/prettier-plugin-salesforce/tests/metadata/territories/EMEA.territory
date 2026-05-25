@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Territory>
+  <accountAccessLevel>Read</accountAccessLevel>
+  <caseAccessLevel>Read</caseAccessLevel>
+  <contactAccessLevel>Read</contactAccessLevel>
+  <description>EMEA partner territory with read-only account coverage.</description>
+  <name>EMEA Partner</name>
+  <opportunityAccessLevel>Edit</opportunityAccessLevel>
+</Territory>

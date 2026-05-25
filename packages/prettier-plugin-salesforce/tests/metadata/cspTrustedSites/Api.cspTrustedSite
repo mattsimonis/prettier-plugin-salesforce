@@ -1,0 +1,1 @@
+<CspTrustedSite xmlns="http://soap.sforce.com/2006/04/metadata"><endpointUrl>https://api.example.com</endpointUrl><isActive>true</isActive></CspTrustedSite>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- corpus permissionset -->
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+<label>App</label>
+<!-- app block must stay before class access -->
+<applicationVisibilities>
+<application>Widget_App</application>
+<default>false</default>
+<visible>true</visible>
+</applicationVisibilities>
+<classAccesses/>
+<!-- class marker -->
+<fieldPermissions>
+<editable>false</editable>
+<field>Widget__c.Score__c</field>
+<readable>true</readable>
+</fieldPermissions>
+<hasActivationRequired>false</hasActivationRequired>
+</PermissionSet>

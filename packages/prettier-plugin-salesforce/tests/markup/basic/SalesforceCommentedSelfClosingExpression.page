@@ -1,0 +1,1 @@
+<apex:page><apex:outputPanel rendered="{!  showPanel  }"><apex:outputField value="{!Account.Name}"/>{!-- keep owner marker --}<span>{!  Account.Owner.Name  }</span><apex:outputField value="{!Account.Number}"/></apex:outputPanel></apex:page>

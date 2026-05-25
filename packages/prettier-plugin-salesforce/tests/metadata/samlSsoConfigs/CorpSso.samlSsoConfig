@@ -1,0 +1,1 @@
+<SamlSsoConfig><developerName>CorpSso</developerName><loginUrl>https://sso.example.com/login</loginUrl><logoutUrl>https://sso.example.com/logout</logoutUrl><requestSignatureMethod>RSA-SHA256</requestSignatureMethod><samlIdentityLocation>IdentityInSubject</samlIdentityLocation><version>2.0</version></SamlSsoConfig>

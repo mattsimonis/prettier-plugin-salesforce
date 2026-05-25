@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- guard layout sibling shape -->
+<Layout xmlns="http://soap.sforce.com/2006/04/metadata">
+  <layoutSections>
+    <customLabel>true</customLabel>
+    <label>Main</label>
+  </layoutSections>
+  <!-- marker between sections and lists -->
+  <relatedLists/>
+  <showEmailCheckbox>false</showEmailCheckbox>
+</Layout>

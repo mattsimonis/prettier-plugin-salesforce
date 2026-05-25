@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- object encoded matrix -->
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+  <description><![CDATA[Rule <alpha> and <beta>]]></description>
+  <label>Widget &lt;Core&gt; &#60;Data&#62; &#x3C;Hex&#x3E;</label>
+</CustomObject>

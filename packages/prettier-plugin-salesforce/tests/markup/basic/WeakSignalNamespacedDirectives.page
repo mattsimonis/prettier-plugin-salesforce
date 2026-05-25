@@ -1,0 +1,5 @@
+<html xmlns:apex="http://soap.sforce.com/2006/04/metadata">
+  <body>
+    <apex:outputText value="{!  Account.Name + ' / ' + Account.Industry  }"/>
+  </body>
+</html>

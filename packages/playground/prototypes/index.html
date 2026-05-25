@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Playground Layout Prototypes</title>
+    <link rel="stylesheet" href="./prototypes.css" />
+  </head>
+  <body>
+    <header class="prototype-header">
+      <div class="mark">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div>
+        <p>prettier-plugin-salesforce</p>
+        <h1>Playground layout prototypes</h1>
+      </div>
+      <nav>
+        <a href="#workbench">Workbench</a>
+        <a href="#prettier">Prettier-style</a>
+        <a href="#project">Project explorer</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="workbench" class="prototype">
+        <div class="prototype-title">
+          <div>
+            <p>Option A</p>
+            <h2>Formatter Workbench</h2>
+          </div>
+          <span>Most code space</span>
+        </div>
+        <div class="mock workbench">
+          <div class="toolbar">
+            <button class="icon-button">☰</button>
+            <input value="force-app/main/default/classes/InvoiceMath.cls" />
+            <select><option>auto by filepath</option></select>
+            <button class="format">Format</button>
+          </div>
+          <div class="workbench-body">
+            <aside class="drawer">
+              <strong>Samples</strong>
+              <button class="active">InvoiceMath.cls</button>
+              <button>OrderCard.cmp</button>
+              <button>Billing.permissionset-meta.xml</button>
+            </aside>
+            <div class="editors">
+              <article class="editor">
+                <header><span>Input</span><small>12px / 1.55</small></header>
+                <pre><span class="line">1</span><code><b>public</b> with sharing class <em>InvoiceMath</em> {</code>
+<span class="line">2</span><code>  <b>public static</b> Decimal add(Decimal a, Decimal b){</code>
+<span class="line">3</span><code>    return a+b;</code>
+<span class="line">4</span><code>  }</code>
+<span class="line">5</span><code>}</code></pre>
+              </article>
+              <article class="editor">
+                <header><span>Output</span><small>formatted</small></header>
+                <pre><span class="line">1</span><code><b>public</b> with sharing class <em>InvoiceMath</em> {</code>
+<span class="line">2</span><code>  <b>public static</b> Decimal add(Decimal a, Decimal b) {</code>
+<span class="line">3</span><code>    return a + b;</code>
+<span class="line">4</span><code>  }</code>
+<span class="line">5</span><code>}</code></pre>
+              </article>
+            </div>
+            <aside class="config">
+              <strong>Config</strong>
+              <pre>{
+  "printWidth": 100,
+  "singleQuote": false
+}</pre>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section id="prettier" class="prototype">
+        <div class="prototype-title">
+          <div>
+            <p>Option B</p>
+            <h2>Prettier Playground Style</h2>
+          </div>
+          <span>Cleanest public demo</span>
+        </div>
+        <div class="mock prettier-style">
+          <div class="top-controls">
+            <select><option>InvoiceMath.cls</option></select>
+            <select><option>auto by filepath</option></select>
+            <label><input type="checkbox" /> Sort labels</label>
+            <button class="format">Format</button>
+          </div>
+          <div class="wide-editors">
+            <article class="editor">
+              <header><span>Input</span><small>source</small></header>
+              <pre><span class="line">1</span><code>&lt;apex:page&gt;</code>
+<span class="line">2</span><code>  &lt;apex:pageBlock title="Summary"&gt;</code>
+<span class="line">3</span><code>    &lt;apex:outputText value="{!Account.Name}"/&gt;</code>
+<span class="line">4</span><code>  &lt;/apex:pageBlock&gt;</code>
+<span class="line">5</span><code>&lt;/apex:page&gt;</code></pre>
+            </article>
+            <article class="editor">
+              <header><span>Output</span><small>formatted</small></header>
+              <pre><span class="line">1</span><code>&lt;apex:page&gt;</code>
+<span class="line">2</span><code>  &lt;apex:pageBlock title="Summary"&gt;</code>
+<span class="line">3</span><code>    &lt;apex:outputText value="{!Account.Name}" /&gt;</code>
+<span class="line">4</span><code>  &lt;/apex:pageBlock&gt;</code>
+<span class="line">5</span><code>&lt;/apex:page&gt;</code></pre>
+            </article>
+          </div>
+          <div class="bottom-options">
+            <button>Examples</button>
+            <button>Options JSON</button>
+            <button>Share</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="project" class="prototype">
+        <div class="prototype-title">
+          <div>
+            <p>Option C</p>
+            <h2>Salesforce Project Explorer</h2>
+          </div>
+          <span>Best Salesforce breadth story</span>
+        </div>
+        <div class="mock project-style">
+          <aside class="file-tree">
+            <strong>force-app/main/default</strong>
+            <button>classes/InvoiceMath.cls</button>
+            <button>aura/OrderCard/OrderCard.cmp</button>
+            <button class="active">flows/Invoice_Status.flow-meta.xml</button>
+            <button>profiles/Standard.profile-meta.xml</button>
+          </aside>
+          <div class="project-main">
+            <div class="toolbar compact">
+              <input value="force-app/main/default/flows/Invoice_Status.flow-meta.xml" />
+              <button class="format">Format</button>
+            </div>
+            <article class="editor tall">
+              <header><span>Input</span><small>Flow metadata</small></header>
+              <pre><span class="line">1</span><code>&lt;Flow xmlns="http://soap.sforce.com/2006/04/metadata"&gt;</code>
+<span class="line">2</span><code>  &lt;apiVersion&gt;61.0&lt;/apiVersion&gt;</code>
+<span class="line">3</span><code>  &lt;label&gt;Invoice Status&lt;/label&gt;</code>
+<span class="line">4</span><code>  &lt;processType&gt;AutoLaunchedFlow&lt;/processType&gt;</code>
+<span class="line">5</span><code>&lt;/Flow&gt;</code></pre>
+            </article>
+          </div>
+          <aside class="right-stack">
+            <article class="editor mini">
+              <header><span>Output</span></header>
+              <pre><span class="line">1</span><code>&lt;Flow xmlns="..."&gt;</code>
+<span class="line">2</span><code>  &lt;apiVersion&gt;61.0&lt;/apiVersion&gt;</code></pre>
+            </article>
+            <article class="editor mini">
+              <header><span>Config JSON</span></header>
+              <pre>{
+  "printWidth": 100
+}</pre>
+            </article>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

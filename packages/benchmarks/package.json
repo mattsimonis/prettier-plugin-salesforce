@@ -1,0 +1,20 @@
+{
+  "name": "@prettier-salesforce/benchmarks",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm --filter prettier-plugin-salesforce build && tsc -p tsconfig.json",
+    "test": "vitest run",
+    "bench": "tsx src/run-format-benchmark.ts"
+  },
+  "dependencies": {
+    "prettier": "^3.8.3",
+    "prettier-plugin-salesforce": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "tsx": "^4.22.0",
+    "typescript": "^6.0.0",
+    "vitest": "^4.1.0"
+  }
+}

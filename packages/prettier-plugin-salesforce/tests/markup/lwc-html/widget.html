@@ -1,0 +1,1 @@
+<template><template if:true={record}><lightning-card title={record.Name} onclick={handleClick}></lightning-card></template><template for:each={items} for:item="item"><p key={item.Id}>{item.Name}</p></template></template>

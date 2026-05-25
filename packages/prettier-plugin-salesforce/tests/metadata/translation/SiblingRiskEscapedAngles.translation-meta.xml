@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- translation escaped angles -->
+<Translations xmlns="http://soap.sforce.com/2006/04/metadata">
+  <customLabels>
+    <name>Guard_Label</name>
+    <label><![CDATA[Afficher <bloc> avec x >= y]]></label>
+  </customLabels>
+  <fullName>fr</fullName>
+  <language>fr</language>
+  <nameFieldLabel>Nom &lt;Principal&gt;</nameFieldLabel>
+</Translations>

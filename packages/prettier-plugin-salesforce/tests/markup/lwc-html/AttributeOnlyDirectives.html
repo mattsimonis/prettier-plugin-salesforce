@@ -1,0 +1,7 @@
+<c-row-card
+  lwc:if={  row.IsVisible  }
+  for:each={  rowsByGroup [ groupKey ]  }
+  for:item="row"
+  data-name={ row.Name }
+>
+</c-row-card>

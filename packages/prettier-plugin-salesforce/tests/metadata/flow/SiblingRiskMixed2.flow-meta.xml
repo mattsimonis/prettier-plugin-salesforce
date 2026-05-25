@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- guard flow mixed sibling shape variant -->
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+  <apiVersion>60.0</apiVersion>
+  <!-- marker before formulas -->
+  <formulas/>
+  <processType>AutoLaunchedFlow</processType>
+  <status>Active</status>
+  <!-- marker before trigger type -->
+  <triggerType/>
+</Flow>

@@ -1,0 +1,7 @@
+<apex:page>
+  <apex:outputField value="{!Account.Name}"/>
+  {!--
+    keep this comment
+  --}
+  <div>{!Account.Owner.Name}</div>
+</apex:page>

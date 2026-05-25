@@ -1,0 +1,15 @@
+<aura:component>
+  <aura:if isTrue="{!  v.showRows  }">
+    <aura:iteration items="{!  v.itemsByGroup [ v.groupKey ]  }" var="item">
+      <aura:html tag="span"/>
+      <aura:if isTrue="{!  item.IsVisible  }">
+        <aura:text>{!  item.Name + ' / ' + v.suffix  }</aura:text>
+        <aura:unescapedHtml value="{!v.contentMap[item.Id]}"/>
+        <aura:set attribute="else">
+          <aura:text>{!  v.emptyLabel  }</aura:text>
+        </aura:set>
+      </aura:if>
+      <aura:html tag="br"/>
+    </aura:iteration>
+  </aura:if>
+</aura:component>

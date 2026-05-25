@@ -1,0 +1,1 @@
+<CustomNotificationType xmlns="http://soap.sforce.com/2006/04/metadata"><customNotifTypeName>Product_Updates</customNotifTypeName><desktop>true</desktop><masterLabel>Product Updates</masterLabel><mobile>false</mobile></CustomNotificationType>

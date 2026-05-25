@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PathAssistant xmlns="http://soap.sforce.com/2006/04/metadata">
+  <active>true</active>
+  <entityName>Widget__c</entityName>
+  <fieldName>Status__c</fieldName>
+  <masterLabel>Widget Path</masterLabel>
+  <pathAssistantSteps>
+    <fieldNames>Status__c</fieldNames>
+    <fieldNames>Priority__c</fieldNames>
+    <picklistValueName>Open</picklistValueName>
+  </pathAssistantSteps>
+</PathAssistant>

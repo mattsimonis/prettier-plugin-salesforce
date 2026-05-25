@@ -1,0 +1,1 @@
+<RemoteSiteSetting><description>ERP outbound endpoint</description><disableProtocolSecurity>false</disableProtocolSecurity><isActive>true</isActive><url>https://erp.example.com/api</url></RemoteSiteSetting>

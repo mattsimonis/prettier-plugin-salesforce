@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- object escaped angles -->
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+  <description><![CDATA[Rule <alpha> must stay with token > 0]]></description>
+  <sharingModel>ReadWrite &lt;Team&gt;</sharingModel>
+</CustomObject>

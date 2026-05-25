@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8"?><Settings xmlns="http://soap.sforce.com/2006/04/metadata"><enableFeeds>true</enableFeeds><!-- boundary: reorder-sensitive siblings --><defaultSharingModel>Private &lt; Internal &gt; Public</defaultSharingModel><enableHistoryTracking>false</enableHistoryTracking><notificationSubject>Ops &lt;Alert&gt; Queue</notificationSubject></Settings>

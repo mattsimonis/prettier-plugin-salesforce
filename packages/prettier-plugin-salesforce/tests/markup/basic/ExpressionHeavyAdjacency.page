@@ -1,0 +1,1 @@
+<apex:page><apex:outputPanel rendered="{!showPanel}"><apex:outputField value="{!Account.Name}"/><span>{!  Account.Owner.Name + ' / ' + Account.CreatedBy.Name  }</span><apex:facet name="footer"/><apex:outputText>{!IF(showPanel,Account.Industry,Account.Type)}</apex:outputText></apex:outputPanel></apex:page>

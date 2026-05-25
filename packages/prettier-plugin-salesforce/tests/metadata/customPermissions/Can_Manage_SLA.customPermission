@@ -1,0 +1,1 @@
+<CustomPermission><description>Allows SLA policy updates</description><label>Can Manage SLA</label><protected>false</protected><requiredPermissionSets><permissionSet>Support_Manager</permissionSet></requiredPermissionSets><requiredPermissionSets><permissionSet>Operations_Admin</permissionSet></requiredPermissionSets></CustomPermission>

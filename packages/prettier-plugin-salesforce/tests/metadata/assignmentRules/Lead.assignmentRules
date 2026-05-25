@@ -1,0 +1,1 @@
+<AssignmentRules><assignmentRule><active>true</active><assignmentRuleEntries><assignedTo>Queue:Lead_Queue</assignedTo><booleanFilter>1</booleanFilter><criteriaItems><field>LeadSource</field><operation>equals</operation><value>Web</value></criteriaItems><sortOrder>1</sortOrder></assignmentRuleEntries><fullName>Lead_Default</fullName></assignmentRule></AssignmentRules>

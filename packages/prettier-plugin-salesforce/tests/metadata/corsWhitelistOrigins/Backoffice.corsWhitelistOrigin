@@ -1,0 +1,1 @@
+<CorsWhitelistOrigin><allowCredentials>true</allowCredentials><description>Backoffice app origin</description><headers><header>Authorization</header></headers><headers><header>Content-Type</header></headers><isActive>true</isActive><originUrl>https://backoffice.example.com</originUrl><priority>20</priority></CorsWhitelistOrigin>

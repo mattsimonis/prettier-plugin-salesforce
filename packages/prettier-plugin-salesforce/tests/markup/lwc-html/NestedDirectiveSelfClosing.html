@@ -1,0 +1,16 @@
+<template>
+  <template if:true={  hasGroups  }>
+    <template for:each={  groupedRows [ groupKey ]  } for:item="row">
+      <section key={  row.Id  }>
+        <lightning-icon icon-name="utility:user"/>
+        <template lwc:if={  shouldShowRow( row )  }>
+          <lightning-badge label={ row.Badge }/>
+          <span>{  row.Label + ' / ' + row.Value  }</span>
+        </template>
+        <template if:false={  shouldShowRow( row )  }>
+          <lightning-helptext content={ row.Help }/>
+        </template>
+      </section>
+    </template>
+  </template>
+</template>

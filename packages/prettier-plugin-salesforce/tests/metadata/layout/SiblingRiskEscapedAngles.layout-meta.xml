@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- layout escaped angles -->
+<Layout xmlns="http://soap.sforce.com/2006/04/metadata">
+  <customButtons><![CDATA[Button <Open> only when score < 8]]></customButtons>
+  <showEmailCheckbox>&lt;enabled&gt;</showEmailCheckbox>
+</Layout>

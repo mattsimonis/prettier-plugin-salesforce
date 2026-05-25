@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApprovalProcess xmlns="http://soap.sforce.com/2006/04/metadata">
+  <active>true</active>
+  <allowRecall>true</allowRecall>
+  <allowedSubmitters>
+    <submitter>owner</submitter>
+    <type>owner</type>
+  </allowedSubmitters>
+  <approvalStep>
+    <allowDelegate>false</allowDelegate>
+    <assignedApprover>
+      <approver>manager</approver>
+      <type>manager</type>
+    </assignedApprover>
+    <label>Manager Review</label>
+    <name>Manager_Review</name>
+  </approvalStep>
+  <description>Widget approvals for record updates.</description>
+  <entryCriteria>
+    <criteriaItems>
+      <field>Widget__c.Status__c</field>
+      <operation>equals</operation>
+      <value>Pending Approval</value>
+    </criteriaItems>
+  </entryCriteria>
+  <finalApprovalActions>
+    <name>Notify_Record_Owner</name>
+    <type>EmailAlert</type>
+  </finalApprovalActions>
+  <label>Widget Approval</label>
+  <recordEditability>AdminOrCurrentApprover</recordEditability>
+</ApprovalProcess>

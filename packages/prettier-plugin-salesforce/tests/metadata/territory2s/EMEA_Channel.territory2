@@ -1,0 +1,10 @@
+<Territory2>
+  <accountAccessLevel>Read</accountAccessLevel>
+  <caseAccessLevel>Read</caseAccessLevel>
+  <contactAccessLevel>Read</contactAccessLevel>
+  <description>Channel partners in EMEA.</description>
+  <name>EMEA_Channel</name>
+  <opportunityAccessLevel>Read</opportunityAccessLevel>
+  <priority>30</priority>
+  <ruleTerritory2Type>Channel</ruleTerritory2Type>
+</Territory2>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- corpus profile v3 -->
+<Profile xmlns="http://soap.sforce.com/2006/04/metadata">
+<custom>true</custom>
+<!-- apps first -->
+<applicationVisibilities>
+<application>Widget_App</application>
+<default>false</default>
+<visible>true</visible>
+</applicationVisibilities>
+<fieldPermissions/>
+<!-- record type detail before tabs -->
+<recordTypeVisibilities>
+<recordType>Widget__c.Standard</recordType>
+<visible>true</visible>
+</recordTypeVisibilities>
+<tabVisibilities/>
+</Profile>

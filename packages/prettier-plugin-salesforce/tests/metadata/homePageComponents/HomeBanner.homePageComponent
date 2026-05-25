@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HomePageComponent xmlns="http://soap.sforce.com/2006/04/metadata">
+  <body>Welcome to the service desk.</body>
+  <frame>false</frame>
+  <height>200</height>
+  <links>
+    <linkName>Knowledge</linkName>
+    <linkType>url</linkType>
+    <url>/lightning/o/Knowledge__kav/list</url>
+  </links>
+  <nameFieldLabel>Support Banner</nameFieldLabel>
+  <showScrollbars>false</showScrollbars>
+  <windowHeight>480</windowHeight>
+</HomePageComponent>

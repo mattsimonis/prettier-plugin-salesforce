@@ -1,0 +1,1 @@
+<AuthProvider xmlns="http://soap.sforce.com/2006/04/metadata"><friendlyName>Partner SSO</friendlyName><providerType>OpenIdConnect</providerType></AuthProvider>

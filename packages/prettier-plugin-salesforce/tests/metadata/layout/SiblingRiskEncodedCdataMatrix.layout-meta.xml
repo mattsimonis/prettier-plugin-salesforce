@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- layout encoded cdata matrix -->
+<Layout xmlns="http://soap.sforce.com/2006/04/metadata">
+  <customButtons><![CDATA[Button <Open> keeps &amp; rolls]]></customButtons>
+  <miniLayout>&lt;Compact&gt; &#60;Wide&#62; &#x3C;Hex&#x3E;</miniLayout>
+  <relatedLists>
+    <relatedList><![CDATA[Widget__c.<Related>__r]]></relatedList>
+  </relatedLists>
+</Layout>

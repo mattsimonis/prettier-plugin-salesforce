@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8"?><ruleset name="Mixed Ruleset"><description>Keep sibling order stable.</description><!-- keep sibling order stable --><rule ref="category/apex/design.xml/NcssConstructorCount"/></ruleset>

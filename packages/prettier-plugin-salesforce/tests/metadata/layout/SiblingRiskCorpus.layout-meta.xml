@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- corpus layout -->
+<Layout xmlns="http://soap.sforce.com/2006/04/metadata">
+<layoutSections>
+<label>Information</label>
+<style>TwoColumnsTopToBottom</style>
+</layoutSections>
+<!-- sections before related lists -->
+<relatedLists/>
+<!-- related lists before setting -->
+<showEmailCheckbox>false</showEmailCheckbox>
+</Layout>

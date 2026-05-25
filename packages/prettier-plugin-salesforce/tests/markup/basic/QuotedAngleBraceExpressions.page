@@ -1,0 +1,15 @@
+<apex:page>
+  <apex:outputPanel
+    rendered="{!  IF(showPanel, true, false)  }"
+    styleClass="slds-p-around_small"
+    title="{!  IF(showPanel, 'x < y {z}', '<em>{none}</em>')  }"
+  >
+    <apex:outputText
+      value="{!IF(showPanel, '<span>{x}</span>', '<em>none</em>')}"
+      escape="false"
+      styleClass="ownerLine"
+    >
+      {!IF(showPanel, '<span>{x}</span>', '<em>none</em>')}
+    </apex:outputText>
+  </apex:outputPanel>
+</apex:page>

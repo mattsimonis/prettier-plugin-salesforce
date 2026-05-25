@@ -1,0 +1,1 @@
+<RemoteSiteSetting><description>Support service API endpoint</description><disableProtocolSecurity>false</disableProtocolSecurity><isActive>true</isActive><url>https://support.example.com/api</url></RemoteSiteSetting>

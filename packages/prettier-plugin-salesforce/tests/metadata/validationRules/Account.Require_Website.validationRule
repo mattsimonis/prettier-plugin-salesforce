@@ -1,0 +1,1 @@
+<ValidationRule><active>true</active><description>Website required when customer is active</description><errorConditionFormula>AND(IsActive__c, ISBLANK(Website))</errorConditionFormula><errorDisplayField>Website</errorDisplayField><errorMessage>Website is required for active customers.</errorMessage><fullName>Account.Require_Website</fullName></ValidationRule>

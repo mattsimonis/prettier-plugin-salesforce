@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ManagedContentType xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fullName>Blog</fullName>
+  <description>Mixed sibling ordering sample for managed content type routing.</description>
+  <managedContentNodeTypes>
+    <nodeTypeName>title</nodeTypeName>
+    <isRequired>true</isRequired>
+  </managedContentNodeTypes>
+</ManagedContentType>

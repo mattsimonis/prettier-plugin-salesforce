@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- permissionset encoded matrix -->
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+  <description><![CDATA[Guard <A> and <B>]]></description>
+  <label>Ops &lt;Core&gt; &#60;Lead&#62; &#x3C;Hex&#x3E;</label>
+</PermissionSet>

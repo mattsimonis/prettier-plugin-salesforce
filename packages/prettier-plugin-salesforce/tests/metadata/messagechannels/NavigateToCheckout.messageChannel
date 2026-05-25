@@ -1,0 +1,1 @@
+<LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata"><description>Broadcast checkout navigation requests</description><isExposed>true</isExposed><lightningMessageFields><description>Target route key</description><fieldName>routeName</fieldName></lightningMessageFields><masterLabel>Navigate To Checkout</masterLabel></LightningMessageChannel>

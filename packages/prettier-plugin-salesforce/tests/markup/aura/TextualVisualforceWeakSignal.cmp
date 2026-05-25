@@ -1,0 +1,5 @@
+<aura:component>
+  <aura:text>
+    xmlns:apex="http://soap.sforce.com/2006/04/metadata"
+  </aura:text>
+</aura:component>

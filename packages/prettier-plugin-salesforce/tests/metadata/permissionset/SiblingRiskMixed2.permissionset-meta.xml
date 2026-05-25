@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- guard permissionset mixed sibling shape variant -->
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+  <applicationVisibilities>
+    <application>Widget_App</application>
+    <default>false</default>
+    <visible>true</visible>
+  </applicationVisibilities>
+  <!-- marker before object perms -->
+  <objectPermissions/>
+  <fieldPermissions>
+    <editable>false</editable>
+    <field>Widget__c.Name</field>
+    <readable>true</readable>
+  </fieldPermissions>
+  <!-- marker before tab visibility -->
+  <tabSettings/>
+</PermissionSet>

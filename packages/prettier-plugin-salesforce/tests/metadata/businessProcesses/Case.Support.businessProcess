@@ -1,0 +1,1 @@
+<BusinessProcess><description>Support case lifecycle</description><fullName>Case.Support</fullName><isActive>true</isActive><values><fullName>New</fullName><default>true</default></values><values><fullName>Escalated</fullName><default>false</default></values></BusinessProcess>

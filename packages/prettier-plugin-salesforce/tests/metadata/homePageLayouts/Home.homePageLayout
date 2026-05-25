@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HomePageLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+  <narrowComponents>
+    <componentType>TaskList</componentType>
+    <page>Home</page>
+    <showOnPhone>false</showOnPhone>
+  </narrowComponents>
+  <narrowComponents>
+    <componentType>RecentItems</componentType>
+    <page>Home</page>
+    <showOnPhone>true</showOnPhone>
+  </narrowComponents>
+  <wideComponents>
+    <componentType>DashboardSnapshot</componentType>
+    <page>Home</page>
+    <showOnPhone>false</showOnPhone>
+  </wideComponents>
+</HomePageLayout>

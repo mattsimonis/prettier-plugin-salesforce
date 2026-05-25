@@ -1,0 +1,1 @@
+<apex:page><apex:outputPanel><!-- <c-row-card lwc:if={show} for:each={rows} /> --><apex:outputText>{!Account.Name}</apex:outputText>{!-- <template lwc:elseif={showMore} /> --}<apex:outputField value="{!Account.Number}"/></apex:outputPanel></apex:page>

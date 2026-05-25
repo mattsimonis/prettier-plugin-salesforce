@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- translation corpus4 -->
+<Translations xmlns="http://soap.sforce.com/2006/04/metadata">
+  <customLabels>
+    <label>Widget_Status</label>
+    <name>Widget_Status</name>
+    <translation>Statut</translation>
+  </customLabels>
+  <!-- marker between translation blocks -->
+  <customLabels/>
+  <name>fr</name>
+</Translations>

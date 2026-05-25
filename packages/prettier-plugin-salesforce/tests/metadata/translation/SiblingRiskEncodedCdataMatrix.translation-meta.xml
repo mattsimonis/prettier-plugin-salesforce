@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- translation encoded cdata matrix -->
+<Translations xmlns="http://soap.sforce.com/2006/04/metadata">
+  <customLabels>
+    <name>Guard_Label_CDATA</name>
+    <label><![CDATA[Afficher <bloc> &amp; garder]]></label>
+  </customLabels>
+  <fullName>fr</fullName>
+  <nameFieldLabel>Nom &lt;Principal&gt; &#60;Court&#62; &#x3C;Hex&#x3E;</nameFieldLabel>
+</Translations>

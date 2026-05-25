@@ -1,0 +1,1 @@
+<LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata"><description>Broadcast order summary requests</description><isExposed>true</isExposed><lightningMessageFields><description>Order identifier</description><fieldName>orderId</fieldName></lightningMessageFields><masterLabel>Navigate To Order Summary</masterLabel></LightningMessageChannel>

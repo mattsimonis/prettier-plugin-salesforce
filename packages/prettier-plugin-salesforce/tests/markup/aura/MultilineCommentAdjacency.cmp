@@ -1,0 +1,7 @@
+<aura:component>
+  <aura:text value="{!v.label}"/>
+  <!--
+    keep this comment
+  -->
+  <div>{!v.label}</div>
+</aura:component>

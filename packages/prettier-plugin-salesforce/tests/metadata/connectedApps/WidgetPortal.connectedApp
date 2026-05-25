@@ -1,0 +1,11 @@
+<ConnectedApp xmlns="http://soap.sforce.com/2006/04/metadata">
+  <contactEmail>owner@example.com</contactEmail>
+  <label>Widget Portal</label>
+  <oauthConfig>
+    <callbackUrl>https://app.example.com/callback</callbackUrl>
+    <isAdminApproved>true</isAdminApproved>
+    <isConsumerSecretOptional>false</isConsumerSecretOptional>
+    <scopes>Api</scopes>
+    <scopes>RefreshToken</scopes>
+  </oauthConfig>
+</ConnectedApp>

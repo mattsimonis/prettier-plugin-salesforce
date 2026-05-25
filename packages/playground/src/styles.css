@@ -1,0 +1,326 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter var", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", "Cascadia Code", "Roboto Mono", Menlo, Monaco, Consolas, monospace;
+}
+
+@layer components {
+  .prettier-mark {
+    @apply grid h-10 w-10 shrink-0 grid-cols-2 gap-1 rounded-lg bg-[#1b2559] p-2 shadow-lg shadow-black/30 ring-1 ring-white/10;
+  }
+
+  .prettier-mark span {
+    @apply rounded-full;
+  }
+
+  .status-pill {
+    @apply rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300 shadow-sm;
+  }
+
+  .workspace,
+  .code-panel,
+  .tool-drawer {
+    @apply min-w-0 rounded-lg border border-white/10 bg-[#111827] shadow-2xl shadow-black/20;
+  }
+
+  .workspace {
+    @apply flex min-h-[calc(100vh-80px)] flex-col gap-2.5 p-2.5;
+  }
+
+  .control-rail {
+    @apply flex min-w-0 flex-col gap-2 rounded-lg border border-white/10 bg-[#0b1020] p-2 sm:flex-row sm:items-end;
+  }
+
+  .control-label {
+    @apply mb-1 block text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400;
+  }
+
+  .control-input {
+    @apply h-10 w-full rounded-lg border border-white/10 bg-[#070b16] px-3 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-[#56b3b4] focus:ring-4 focus:ring-[#56b3b4]/15;
+  }
+
+  select.control-input {
+    appearance: none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, #94a3b8 50%),
+      linear-gradient(135deg, #94a3b8 50%, transparent 50%);
+    background-position:
+      calc(100% - 22px) 50%,
+      calc(100% - 16px) 50%;
+    background-size:
+      6px 6px,
+      6px 6px;
+    background-repeat: no-repeat;
+    padding-right: 3rem;
+  }
+
+  .primary-button {
+    @apply h-10 rounded-lg bg-[#f7b93e] px-6 text-sm font-bold text-[#17120a] shadow-lg shadow-[#f7b93e]/10 transition hover:bg-[#ffd06e] focus:outline-none focus:ring-4 focus:ring-[#f7b93e]/25;
+  }
+
+  .ghost-button {
+    @apply rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-white/20 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-[#56b3b4]/15;
+  }
+
+  .toggle-pill {
+    @apply inline-flex cursor-pointer items-center gap-2 rounded-md border border-white/10 bg-[#0b1020] px-3 py-2 text-sm font-medium text-slate-300 shadow-sm transition hover:bg-white/5;
+  }
+
+  .control-toggle {
+    @apply h-10 shrink-0;
+  }
+
+  .toggle-pill input {
+    @apply h-4 w-4 accent-[#f7b93e];
+  }
+
+  .config-toggle {
+    @apply h-10 w-full justify-start rounded-lg bg-[#070b16] px-3;
+  }
+
+  .config-toggle-wide {
+    @apply md:col-span-2;
+  }
+
+  .tool-drawer {
+    @apply overflow-hidden p-0;
+  }
+
+  .tool-drawer summary {
+    @apply flex h-9 cursor-pointer select-none items-center px-3 text-sm font-semibold text-slate-200 outline-none;
+  }
+
+  .tool-drawer[open] summary {
+    @apply border-b border-white/10;
+  }
+
+  .drawer-grid {
+    @apply grid gap-2 p-2 lg:grid-cols-[0.75fr_1.25fr];
+  }
+
+  .drawer-section {
+    @apply min-w-0 rounded-md border border-white/10 bg-[#0b1020]/70 p-2;
+  }
+
+  .drawer-section-wide {
+    @apply lg:min-w-0;
+  }
+
+  .drawer-heading {
+    @apply mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500;
+  }
+
+  .drawer-heading-row {
+    @apply mb-2 flex items-center justify-between gap-3;
+  }
+
+  .drawer-heading-row .drawer-heading {
+    @apply mb-0;
+  }
+
+  .config-control-grid {
+    @apply grid gap-2 md:grid-cols-2;
+  }
+
+  .config-help {
+    @apply rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-xs leading-5 text-slate-400;
+  }
+
+  .config-grid {
+    @apply grid gap-2;
+  }
+
+  .pane-grid {
+    @apply grid min-w-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-2;
+  }
+
+  .code-panel {
+    @apply flex min-h-[calc(100vh-235px)] flex-col overflow-hidden;
+  }
+
+  .panel-header {
+    @apply flex items-center justify-between gap-4 border-b border-white/10 bg-[#0b1020] px-4 py-2.5;
+  }
+
+  .panel-kicker {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500;
+  }
+
+  .panel-header h2 {
+    @apply text-sm font-semibold text-white;
+  }
+
+  .tree-group-title {
+    @apply mb-1 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.14em] text-slate-500;
+  }
+
+  .tree-list {
+    @apply flex flex-wrap gap-1.5;
+  }
+
+  .tree-item {
+    @apply flex max-w-full items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-left transition hover:border-white/20 hover:bg-white/5 focus:outline-none focus:ring-4 focus:ring-[#56b3b4]/15;
+  }
+
+  .tree-item.is-active {
+    @apply border-[#56b3b4]/40 bg-[#56b3b4]/10 shadow-sm;
+  }
+
+  .tree-item-name {
+    @apply whitespace-nowrap text-xs font-semibold text-slate-100;
+  }
+
+  .tree-item-path {
+    @apply hidden truncate font-mono text-[11px] text-slate-400;
+  }
+
+  .tree-item-meta {
+    @apply flex shrink-0 flex-wrap gap-1.5;
+  }
+
+  .chip {
+    @apply rounded-full bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-slate-300;
+  }
+
+  .chip-accent {
+    @apply bg-[#f7b93e]/20 text-[#ffd06e];
+  }
+
+  .error-pane {
+    @apply m-0 min-h-0 whitespace-pre-wrap rounded-xl border border-red-400/30 bg-red-950/40 px-3 py-2 font-mono text-xs text-red-200 empty:hidden;
+  }
+
+  .editor-shell {
+    @apply grid min-h-0 flex-1 grid-cols-[42px_minmax(0,1fr)] bg-[#070b16];
+  }
+
+  .editor-shell-small {
+    @apply h-56 flex-none rounded-md border border-white/10;
+  }
+
+  .editor-gutter,
+  .editor-highlight,
+  .editor-input {
+    margin: 0;
+    tab-size: var(--editor-tab-size, 2);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.52;
+    letter-spacing: 0;
+  }
+
+  .editor-gutter {
+    @apply overflow-hidden border-r border-white/10 px-2 py-2.5 text-right text-slate-600 select-none;
+  }
+
+  .editor-main {
+    @apply relative min-h-0 min-w-0;
+  }
+
+  .editor-highlight,
+  .editor-input {
+    @apply absolute inset-0 overflow-auto whitespace-pre px-3 py-2.5;
+  }
+
+  .editor-highlight {
+    @apply pointer-events-none text-slate-100;
+  }
+
+  .editor-input {
+    @apply z-10 h-full w-full resize-none border-0 bg-transparent text-transparent outline-none;
+    caret-color: #e5e7eb;
+  }
+
+  .editor-input::selection {
+    background: rgba(86, 179, 180, 0.32);
+    color: transparent;
+  }
+
+  .editor-highlight,
+  .editor-input {
+    scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+    scrollbar-width: thin;
+  }
+
+  .editor-highlight::-webkit-scrollbar,
+  .editor-input::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+  }
+
+  .editor-highlight::-webkit-scrollbar-track,
+  .editor-input::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .editor-highlight::-webkit-scrollbar-thumb,
+  .editor-input::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.35);
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: padding-box;
+  }
+
+  .editor-highlight::-webkit-scrollbar-thumb:hover,
+  .editor-input::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.55);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .token.keyword,
+  .token.soql-keyword {
+    color: #cba6f7;
+  }
+
+  .token.class-name,
+  .token.system-type,
+  .token.sobject-name,
+  .token.tag-name {
+    color: #f9e2af;
+  }
+
+  .token.type-declaration {
+    color: #f38ba8;
+  }
+
+  .token.method-call,
+  .token.method-declaration {
+    color: #89b4fa;
+  }
+
+  .token.annotation-name,
+  .token.annotation-attr {
+    color: #fab387;
+  }
+
+  .token.sobject-field,
+  .token.identifier {
+    color: #cdd6f4;
+  }
+
+  .token.string {
+    color: #a6e3a1;
+  }
+
+  .token.number,
+  .token.constant {
+    color: #fab387;
+  }
+
+  .token.comment {
+    color: #7f849c;
+  }
+
+  .token.operator {
+    color: #89dceb;
+  }
+
+  .token.punctuation,
+  .token.paren,
+  .token.bracket,
+  .token.dot {
+    color: #9399b2;
+  }
+}

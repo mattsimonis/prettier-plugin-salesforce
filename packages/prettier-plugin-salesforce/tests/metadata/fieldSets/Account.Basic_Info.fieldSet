@@ -1,0 +1,1 @@
+<FieldSet><description>Basic account fields</description><displayedFields><field>Name</field><isFieldManaged>false</isFieldManaged><isRequired>true</isRequired></displayedFields><fullName>Account.Basic_Info</fullName><label>Basic Info</label></FieldSet>

@@ -1,0 +1,4 @@
+<section aura:id="resultsPanel" aura:flavorable="true">
+  <lightning:icon iconName="utility:user"/>
+  <p>{!  v.label + ' / ' + v.suffix  }</p>
+</section>

@@ -1,0 +1,4 @@
+<apex:page>
+  <apex:outputText value="{!Account.Name}" />
+  <div><c-row-card<!-- split --> lwc:if={showRows}></c-row-card></div>
+</apex:page>

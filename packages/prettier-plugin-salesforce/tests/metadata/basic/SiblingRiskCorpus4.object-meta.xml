@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- object corpus4 -->
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+  <nameField>
+    <label>Widget Name</label>
+    <type>Text</type>
+  </nameField>
+  <!-- marker before bp -->
+  <businessProcesses/>
+  <deploymentStatus>Deployed</deploymentStatus>
+  <!-- marker before sharing -->
+  <sharingModel/>
+</CustomObject>

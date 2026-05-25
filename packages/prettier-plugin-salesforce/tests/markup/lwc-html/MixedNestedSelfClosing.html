@@ -1,0 +1,13 @@
+<template>
+  <template if:true={  hasRows  }>
+    <lightning-icon icon-name="utility:user"/>
+    <template for:each={  rowsByGroup [ groupKey ]  } for:item="row">
+      <div key={  row.Id  }>
+        <template lwc:if={  shouldShow( row )  }>
+          <span>{  row.Label  }</span>
+          <lightning-badge label={ row.Badge }/>
+        </template>
+      </div>
+    </template>
+  </template>
+</template>

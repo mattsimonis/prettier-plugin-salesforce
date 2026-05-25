@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- corpus profile -->
+<Profile xmlns="http://soap.sforce.com/2006/04/metadata">
+<custom>true</custom>
+<!-- apps before fields -->
+<applicationVisibilities>
+<application>Widget_App</application>
+<default>false</default>
+<visible>true</visible>
+</applicationVisibilities>
+<fieldPermissions/>
+<!-- fields before tabs -->
+<tabVisibilities>
+<tab>standard-Account</tab>
+<visibility>DefaultOn</visibility>
+</tabVisibilities>
+<userLicense>Salesforce</userLicense>
+</Profile>

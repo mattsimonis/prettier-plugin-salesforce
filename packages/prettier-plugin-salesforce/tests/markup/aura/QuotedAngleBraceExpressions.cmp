@@ -1,0 +1,12 @@
+<aura:component>
+  <aura:if isTrue="{!  v.showPanel  }">
+    <aura:text
+      value="{!  IF(v.showPanel, '<span>{x}</span>', '<em>none</em>')  }"
+      class="slds-text-body_small"
+      title="{!  v.showPanel ? 'x < y {z}' : '<em>{none}</em>'  }"
+    >
+      {!  IF(v.showPanel, '<span>{x}</span>', '<em>none</em>')  }
+    </aura:text>
+    <aura:unescapedHtml value="{!v.contentById[v.activeId]}"/>
+  </aura:if>
+</aura:component>

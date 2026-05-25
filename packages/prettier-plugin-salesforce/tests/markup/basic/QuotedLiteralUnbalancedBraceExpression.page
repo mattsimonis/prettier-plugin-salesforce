@@ -1,0 +1,1 @@
+<apex:page><apex:outputPanel><apex:outputField value="{!Account.Number}"/><span>{!  IF(showPanel, 'left {', 'right')  }</span></apex:outputPanel></apex:page>

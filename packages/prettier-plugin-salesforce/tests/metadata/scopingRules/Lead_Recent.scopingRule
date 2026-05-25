@@ -1,0 +1,1 @@
+<ScopingRule><active>true</active><booleanFilter>(CreatedDate = LAST_N_DAYS:30)</booleanFilter><description>Recent leads scope</description><masterLabel>Lead Recent</masterLabel><sObject>Lead</sObject></ScopingRule>

@@ -1,0 +1,10 @@
+<Territory2 xmlns="http://soap.sforce.com/2006/04/metadata">
+  <accountAccessLevel>Edit</accountAccessLevel>
+  <caseAccessLevel>Read</caseAccessLevel>
+  <contactAccessLevel>Edit</contactAccessLevel>
+  <description>West region direct enterprise accounts.</description>
+  <name>US_West</name>
+  <opportunityAccessLevel>Edit</opportunityAccessLevel>
+  <priority>10</priority>
+  <ruleTerritory2Type>Direct</ruleTerritory2Type>
+</Territory2>

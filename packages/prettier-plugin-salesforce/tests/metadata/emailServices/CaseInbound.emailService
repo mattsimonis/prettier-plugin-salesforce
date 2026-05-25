@@ -1,0 +1,5 @@
+<EmailServicesFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+  <authorizedSenders>support@example.com</authorizedSenders>
+  <functionName>CaseInbound</functionName>
+  <isActive>true</isActive>
+</EmailServicesFunction>

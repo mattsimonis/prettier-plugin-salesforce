@@ -1,0 +1,1 @@
+<PermissionSetGroup><description>Finance access bundle</description><label>Finance Access</label><mutingPermissionSets><permissionSet>Finance_Mute</permissionSet></mutingPermissionSets><permissionSets><permissionSet>Finance_Core</permissionSet></permissionSets><status>Updated</status></PermissionSetGroup>

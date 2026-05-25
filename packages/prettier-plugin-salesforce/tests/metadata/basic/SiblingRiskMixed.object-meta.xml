@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- guard object sibling shape -->
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+  <deploymentStatus>Deployed</deploymentStatus>
+  <!-- marker between deployment and sharing -->
+  <description/>
+  <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

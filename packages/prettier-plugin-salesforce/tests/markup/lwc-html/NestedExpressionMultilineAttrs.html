@@ -1,0 +1,1 @@
+<template><template if:true={  hasRows  } for:each={  rowsByGroup [ groupKey ]  } for:item="row"><button key={  row.Id  } onclick={  handlePick( row.Id )  } onkeydown={  handleKeyDown( row.Id )  } aria-label={  row.Label + ' / ' + row.Value  }>{  row.Label + ' / ' + row.Value  }</button><lightning-badge label={row.Badge}/></template></template>

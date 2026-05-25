@@ -1,0 +1,1 @@
+<aura:component><aura:attribute name="recordId" type="String"/><lightning:card title="{!v.recordId}"><aura:iteration items="{!v.items}" var="item"><p>{!item.Name}</p></aura:iteration></lightning:card></aura:component>

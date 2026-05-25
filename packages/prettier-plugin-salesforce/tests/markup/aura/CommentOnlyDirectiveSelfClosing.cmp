@@ -1,0 +1,1 @@
+<aura:component><aura:if isTrue="{!v.showRows}"><!-- <c-row-card lwc:if={show} for:each={rows} /> --><aura:text>{!v.label}</aura:text>{!-- <template lwc:else /> --}<aura:unescapedHtml value="{!v.content}"/></aura:if></aura:component>

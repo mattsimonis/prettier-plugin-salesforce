@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8"?><CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata"><description>Service console for support and billing operations</description><formFactors>Large</formFactors><label>Service Console</label><tabs>standard-Case</tabs><tabs>standard-Account</tabs><tabs>custom-Invoice__c</tabs><uiType>Lightning</uiType></CustomApplication>

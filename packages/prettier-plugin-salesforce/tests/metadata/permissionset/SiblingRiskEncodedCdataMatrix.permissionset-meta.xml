@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- permissionset encoded cdata matrix -->
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+  <description><![CDATA[Guard <A> then carry &amp; hold]]></description>
+  <label>Ops &lt;Core&gt; &#60;Lead&#62; &#x3C;Hex&#x3E;</label>
+  <userPermissions>
+    <enabled>true</enabled>
+    <name><![CDATA[Run <Reports> & keep]]></name>
+  </userPermissions>
+</PermissionSet>

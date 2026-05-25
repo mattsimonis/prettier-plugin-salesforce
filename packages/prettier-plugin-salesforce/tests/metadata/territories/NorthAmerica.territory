@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Territory xmlns="http://soap.sforce.com/2006/04/metadata">
+  <accountAccessLevel>Edit</accountAccessLevel>
+  <caseAccessLevel>Read</caseAccessLevel>
+  <contactAccessLevel>Edit</contactAccessLevel>
+  <description>North America territory for enterprise accounts.</description>
+  <name>North America</name>
+  <opportunityAccessLevel>Edit</opportunityAccessLevel>
+</Territory>

@@ -1,0 +1,9 @@
+<aura:component>
+  <aura:if isTrue="{!  v.showRows  }">
+    <aura:html tag="span"/>
+    <aura:iteration items="{!  v.items  }" var="item">
+      <aura:text>{!  item.Name + ' - ' + v.suffix  }</aura:text>
+      <aura:unescapedHtml value="{!v.content}"/>
+    </aura:iteration>
+  </aura:if>
+</aura:component>

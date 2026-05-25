@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- guard translation sibling shape -->
+<Translations xmlns="http://soap.sforce.com/2006/04/metadata">
+  <customLabels>
+    <name>Guard_Label</name>
+    <!-- marker between name and label -->
+    <label/>
+  </customLabels>
+  <fullName>fr</fullName>
+  <nameFieldLabel>Nom principal</nameFieldLabel>
+</Translations>

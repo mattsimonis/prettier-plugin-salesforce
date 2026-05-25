@@ -1,0 +1,9 @@
+<apex:page>
+  <apex:outputPanel rendered="{!  showPanel  }">
+    <apex:outputField value="{!Account.Name}"/>
+    <apex:outputPanel>
+      <apex:outputText>{!  Account.Owner.Name  }</apex:outputText>
+      <apex:outputField value="{!Account.Number}"/>
+    </apex:outputPanel>
+  </apex:outputPanel>
+</apex:page>

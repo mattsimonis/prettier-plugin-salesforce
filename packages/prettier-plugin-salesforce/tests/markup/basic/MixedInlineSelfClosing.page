@@ -1,0 +1,1 @@
+<apex:page><apex:outputPanel rendered="{!showPanel}"><apex:outputField value="{!Account.Name}"/><apex:outputText>{!IF(showPanel, Account.Owner.Name, Account.CreatedBy.Name)}</apex:outputText><apex:outputField value="{!Account.Number}"/></apex:outputPanel></apex:page>

@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8"?><Community xmlns="http://soap.sforce.com/2006/04/metadata"><active>true</active><description>Customer portal community</description><name>customer_portal</name><site>customer_portal</site><template>Customer Service</template><urlPathPrefix>customer-portal</urlPathPrefix></Community>

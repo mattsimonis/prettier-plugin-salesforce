@@ -1,0 +1,7 @@
+<Role xmlns="http://soap.sforce.com/2006/04/metadata">
+  <caseAccessForAccountOwner>Edit</caseAccessForAccountOwner>
+  <contactAccessForAccountOwner>Read</contactAccessForAccountOwner>
+  <name>Support Manager</name>
+  <opportunityAccessForAccountOwner>Read</opportunityAccessForAccountOwner>
+  <parentRole>Customer_Success</parentRole>
+</Role>

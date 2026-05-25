@@ -1,0 +1,1 @@
+<BusinessProcess><description>Standard account business process</description><fullName>Account.Standard</fullName><isActive>true</isActive><values><fullName>New</fullName><default>true</default></values></BusinessProcess>

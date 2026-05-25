@@ -1,0 +1,4 @@
+<aura:component>
+  <aura:text>{!v.label}</aura:text>
+  <div><c-row-card<!-- split --> lwc:if={showRows}></c-row-card></div>
+</aura:component>

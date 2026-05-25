@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- permissionset escaped angles -->
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+  <description><![CDATA[Guard <A> and <B> with score <= 10]]></description>
+  <label>Team &lt;Ops&gt;</label>
+</PermissionSet>

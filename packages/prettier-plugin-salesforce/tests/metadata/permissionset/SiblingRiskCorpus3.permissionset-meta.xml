@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- corpus permissionset v3 -->
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+<label>Widget App</label>
+<!-- app visibility block -->
+<applicationVisibilities>
+<application>Widget_App</application>
+<default>false</default>
+<visible>true</visible>
+</applicationVisibilities>
+<!-- keep empty class entry in place -->
+<classAccesses/>
+<fieldPermissions>
+<editable>false</editable>
+<field>Widget__c.Score__c</field>
+<readable>true</readable>
+</fieldPermissions>
+<!-- tabs stay after field perms -->
+<tabSettings/>
+</PermissionSet>

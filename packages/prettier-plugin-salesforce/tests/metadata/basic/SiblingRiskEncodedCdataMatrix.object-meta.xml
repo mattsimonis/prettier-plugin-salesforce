@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- object encoded cdata matrix -->
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+  <description><![CDATA[Rule <alpha> with &amp; mark]]></description>
+  <label>Widget &lt;Core&gt; &#60;Data&#62; &#x3C;Hex&#x3E;</label>
+  <validationRules>
+    <errorMessage><![CDATA[Use <safe> value &amp; stop]]></errorMessage>
+    <fullName>Guard_Rule</fullName>
+  </validationRules>
+</CustomObject>

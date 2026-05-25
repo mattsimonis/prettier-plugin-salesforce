@@ -1,0 +1,74 @@
+{
+  "name": "prettier-plugin-salesforce",
+  "version": "0.0.0",
+  "description": "Prettier plugin for Salesforce Apex, metadata XML, Visualforce, Aura, and LWC template files.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./browser": {
+      "types": "./dist/browser.d.ts",
+      "import": "./dist/browser.js"
+    },
+    "./audit": {
+      "types": "./dist/config-audit-cli.d.ts",
+      "import": "./dist/config-audit-cli.js"
+    },
+    "./config-audit": {
+      "types": "./dist/config-audit.d.ts",
+      "import": "./dist/config-audit.js"
+    },
+    "./config-audit/scan": {
+      "types": "./dist/config-audit-scan.d.ts",
+      "import": "./dist/config-audit-scan.js"
+    },
+    "./config-audit/cli": {
+      "types": "./dist/config-audit-cli.d.ts",
+      "import": "./dist/config-audit-cli.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "prettier",
+    "prettier-plugin",
+    "salesforce",
+    "apex",
+    "sfdx"
+  ],
+  "homepage": "https://github.com/prettier-plugin-salesforce/prettier-plugin-salesforce#readme",
+  "bugs": {
+    "url": "https://github.com/prettier-plugin-salesforce/prettier-plugin-salesforce/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prettier-plugin-salesforce/prettier-plugin-salesforce.git"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "audit:configs": "pnpm build && node dist/config-audit-cli.js"
+  },
+  "peerDependencies": {
+    "prettier": "^3.0.0"
+  },
+  "dependencies": {
+    "@iarna/toml": "^2.2.5",
+    "json5": "^2.2.3",
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "prettier": "^3.8.3",
+    "typescript": "^6.0.0",
+    "vitest": "^4.1.0"
+  }
+}

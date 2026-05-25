@@ -1,0 +1,11 @@
+<apex:page>
+  <apex:outputPanel rendered="{!  AND( showPanel , NOT(ISBLANK(Account.OwnerId)) )  }">
+    <apex:outputField value="{!Account.Name}"/>
+    <apex:outputPanel rendered="{!  showDetails  }">
+      <apex:facet name="footer"/>
+      <apex:outputText>{!  IF(showDetails, Account.Owner.Name + ' / ' + Account.CreatedBy.Name, Account.Name)  }</apex:outputText>
+      <apex:outputField value="{!Account.Number}"/>
+    </apex:outputPanel>
+    <apex:outputText>{!  Account.Industry  }</apex:outputText>
+  </apex:outputPanel>
+</apex:page>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BotTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fullName>SupportTemplate</fullName>
+  <description>Mixed sibling ordering sample for bot template metadata routing.</description>
+  <templateType>EinsteinBot</templateType>
+  <botTemplateVersions>
+    <developerName>Default</developerName>
+    <masterLabel>Default</masterLabel>
+  </botTemplateVersions>
+</BotTemplate>

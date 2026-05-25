@@ -1,0 +1,1 @@
+<template><section class="card-grid"><template for:each={cards} for:item="card"><article key={card.id} class="card"><h2>{card.title}</h2><template if:true={card.owner}><p>{card.owner.name}</p></template></article></template></section></template>

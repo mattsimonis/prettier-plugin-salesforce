@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- labels corpus4 -->
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+  <labels>
+    <fullName>Widget_Status</fullName>
+    <language>en_US</language>
+    <value>Active</value>
+  </labels>
+  <!-- marker between label blocks -->
+  <labels/>
+  <protected>false</protected>
+</CustomLabels>

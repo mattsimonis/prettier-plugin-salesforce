@@ -1,0 +1,1 @@
+<RestrictionRule><active>true</active><booleanFilter>(OwnerId = $User.Id)</booleanFilter><description>Limit cases to owner</description><masterLabel>Case My Queue</masterLabel><sObject>Case</sObject></RestrictionRule>

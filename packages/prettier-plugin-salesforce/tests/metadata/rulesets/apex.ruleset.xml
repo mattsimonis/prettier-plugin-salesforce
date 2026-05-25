@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Apex Ruleset">
+  <description>Apex lint rules.</description>
+  <rule ref="category/apex/design.xml/ExcessiveClassLength"/>
+</ruleset>

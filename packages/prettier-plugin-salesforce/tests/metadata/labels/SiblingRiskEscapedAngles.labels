@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- labels escaped angles -->
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+  <labels>
+    <fullName>Guard_Label</fullName>
+    <language>en_US</language>
+    <protected>false</protected>
+    <shortDescription><![CDATA[Use <raw> and keep <= sign]]></shortDescription>
+    <value>Left &lt; Right &gt; Middle</value>
+  </labels>
+</CustomLabels>

@@ -1,0 +1,1 @@
+<aura:component><aura:iteration items="{!  v.itemsByGroup [ v.groupKey ]  }" var="item" indexVar="index"><aura:text value="{!  item.Name + ' / ' + v.suffix  }" class="slds-text-body_small" title="{!  v.titlesById [ item.Id ]  }">{!  item.Name + ' / ' + v.suffix  }</aura:text><aura:unescapedHtml value="{!v.contentById[item.Id]}"/></aura:iteration></aura:component>

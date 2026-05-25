@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BotVersion xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fullName>Service_Bot.v1</fullName>
+  <botRef>Service_Bot</botRef>
+  <description>Baseline bot version metadata sample.</description>
+</BotVersion>

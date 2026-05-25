@@ -1,0 +1,8 @@
+<apex:page>
+  <section>
+    <div lwc:dom="manual"></div>
+    <template lwc:slot-bind="slotCtx">
+      <span>{!Account.Name}</span>
+    </template>
+  </section>
+</apex:page>

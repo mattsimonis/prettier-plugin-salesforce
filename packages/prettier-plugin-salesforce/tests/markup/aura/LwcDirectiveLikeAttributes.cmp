@@ -1,0 +1,8 @@
+<aura:component>
+  <section>
+    <div lwc:dom="manual"></div>
+    <template lwc:slot-bind="slotCtx">
+      <span>{!v.label}</span>
+    </template>
+  </section>
+</aura:component>

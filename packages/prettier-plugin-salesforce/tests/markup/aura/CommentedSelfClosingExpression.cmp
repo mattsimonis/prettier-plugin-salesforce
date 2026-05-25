@@ -1,0 +1,1 @@
+<aura:component><aura:if isTrue="{!  v.showRows  }"><aura:html tag="span"/><!-- keep label marker --><p>{!  v.label + ' / ' + v.suffix  }</p><aura:unescapedHtml value="{!v.content}"/></aura:if></aura:component>

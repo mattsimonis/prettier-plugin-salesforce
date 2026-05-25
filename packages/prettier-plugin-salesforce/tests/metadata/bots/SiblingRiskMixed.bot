@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bot xmlns="http://soap.sforce.com/2006/04/metadata">
+  <fullName>Support_Bot</fullName>
+  <label>Support Bot</label>
+  <description>Mixed sibling ordering sample for bot metadata routing.</description>
+  <botProcesses>
+    <name>Welcome</name>
+    <botProcessType>Dialog</botProcessType>
+  </botProcesses>
+</Bot>

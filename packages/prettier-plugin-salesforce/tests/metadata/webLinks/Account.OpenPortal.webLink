@@ -1,0 +1,1 @@
+<WebLink><availability>online</availability><description>Open the customer portal</description><displayType>link</displayType><fullName>Account.OpenPortal</fullName><isProtected>false</isProtected><masterLabel>Open Portal</masterLabel><openType>newWindow</openType><url>https://example.com/portal/{!Account.Id}</url></WebLink>

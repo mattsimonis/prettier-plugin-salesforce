@@ -1,0 +1,1 @@
+<apex:component><apex:attribute name="label" type="String" description="Badge label"/><span>{!label}</span></apex:component>
