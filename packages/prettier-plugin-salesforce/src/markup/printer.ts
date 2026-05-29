@@ -1,4 +1,5 @@
 import type { Printer } from "prettier";
+import { applyFinalNewlinePreference } from "../shared/final-newline.js";
 import { formatTagLike } from "../shared/tag-format.js";
 import type { SalesforceMarkupDialect, SalesforceMarkupDocument } from "./parser.js";
 
@@ -12,18 +13,18 @@ export function formatSalesforceMarkup(
   source: string,
   dialect: SalesforceMarkupDialect = "unknown",
   applySalesforceTransforms = true,
-  options: { tabWidth?: unknown; useTabs?: unknown } = {}
+  options: { tabWidth?: unknown; useTabs?: unknown; salesforceFinalNewline?: unknown } = {}
 ): string {
   if (!applySalesforceTransforms) {
-    return ensureTrailingNewline(source);
+    return applyFinalNewlinePreference(ensureTrailingNewline(source), options);
   }
 
   const formatted = formatTagLike(source, options);
   if (dialect === "unknown") {
-    return formatted;
+    return applyFinalNewlinePreference(formatted, options);
   }
 
-  return enforceDialectSpecificInlineRules(formatted, dialect, options);
+  return applyFinalNewlinePreference(enforceDialectSpecificInlineRules(formatted, dialect, options), options);
 }
 
 function ensureTrailingNewline(source: string): string {

@@ -1,11 +1,12 @@
 import type { Printer } from "prettier";
-import { builders } from "prettier/doc";
+import prettierDoc from "prettier/doc.js";
 import { detectSalesforceMarkupDialect } from "../markup/parser.js";
 import { formatSalesforceMarkup } from "../markup/printer.js";
 import { formatXmlConservative } from "../xml/printer.js";
+import { applyFinalNewlinePreference } from "../shared/final-newline.js";
 import type { SalesforceAst } from "../parsers/router.js";
 
-const { hardline } = builders;
+const { hardline } = prettierDoc.builders;
 
 export const routerPrinter: Printer<SalesforceAst> = {
   embed(path, options) {
@@ -38,7 +39,7 @@ export const routerPrinter: Printer<SalesforceAst> = {
       return formatXmlConservative(path.node.text, options);
     }
 
-    return path.node.text.trimEnd() + "\n";
+    return applyFinalNewlinePreference(`${path.node.text.trimEnd()}\n`, options);
   }
 };
 

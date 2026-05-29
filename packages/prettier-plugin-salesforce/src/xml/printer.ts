@@ -1,11 +1,15 @@
 import type { Printer } from "prettier";
+import { applyFinalNewlinePreference } from "../shared/final-newline.js";
 import { formatTagLike } from "../shared/tag-format.js";
 import type { MetadataXmlDocument } from "./parser.js";
 
 export const metadataXmlPrinter: Printer<MetadataXmlDocument> = {
   print(path, options) {
     if (!path.node.applyMetadataTransforms) {
-      return passthroughWithSingleTrailingNewline(path.node.source);
+      return applyFinalNewlinePreference(
+        passthroughWithSingleTrailingNewline(path.node.source),
+        options,
+      );
     }
 
     const formatted = formatXmlConservative(path.node.source, options);
@@ -13,45 +17,79 @@ export const metadataXmlPrinter: Printer<MetadataXmlDocument> = {
       return formatted;
     }
 
-    return sortCustomLabelEntriesByFullName(formatted);
-  }
+    return applyFinalNewlinePreference(
+      sortCustomLabelEntriesByFullName(formatted),
+      options,
+    );
+  },
 };
 
-export function formatXmlConservative(source: string, options: { tabWidth?: unknown; useTabs?: unknown } = {}): string {
+export function formatXmlConservative(
+  source: string,
+  options: {
+    tabWidth?: unknown;
+    useTabs?: unknown;
+    salesforceFinalNewline?: unknown;
+  } = {},
+): string {
   const normalizedSource = normalizeLineEndings(source);
   if (normalizedSource.trim() === "") {
-    return "\n";
+    return applyFinalNewlinePreference("\n", options);
   }
   if (hasRawTextAngleBracket(normalizedSource)) {
-    return ensureTrailingNewline(normalizedSource.trim());
+    return applyFinalNewlinePreference(
+      ensureTrailingNewline(normalizedSource.trim()),
+      options,
+    );
   }
   if (hasLowConfidenceTextConstructs(normalizedSource)) {
-    return ensureTrailingNewline(normalizedSource.trim());
+    return applyFinalNewlinePreference(
+      ensureTrailingNewline(normalizedSource.trim()),
+      options,
+    );
   }
 
   const formatted = formatTagLike(normalizedSource, options);
   if (!preservesXmlStructure(normalizedSource, formatted)) {
-    return ensureTrailingNewline(normalizedSource.trim());
+    return applyFinalNewlinePreference(
+      ensureTrailingNewline(normalizedSource.trim()),
+      options,
+    );
   }
   if (!preservesSiblingBlockStructure(normalizedSource, formatted)) {
-    return ensureTrailingNewline(normalizedSource.trim());
+    return applyFinalNewlinePreference(
+      ensureTrailingNewline(normalizedSource.trim()),
+      options,
+    );
   }
   if (!preservesChildSequenceStructure(normalizedSource, formatted)) {
-    return ensureTrailingNewline(normalizedSource.trim());
+    return applyFinalNewlinePreference(
+      ensureTrailingNewline(normalizedSource.trim()),
+      options,
+    );
   }
   if (!preservesStartTagAttributeStructure(normalizedSource, formatted)) {
-    return ensureTrailingNewline(normalizedSource.trim());
+    return applyFinalNewlinePreference(
+      ensureTrailingNewline(normalizedSource.trim()),
+      options,
+    );
   }
   if (!preservesStartTagAttributeValueShape(normalizedSource, formatted)) {
-    return ensureTrailingNewline(normalizedSource.trim());
+    return applyFinalNewlinePreference(
+      ensureTrailingNewline(normalizedSource.trim()),
+      options,
+    );
   }
 
   const secondPass = formatTagLike(formatted, options);
   if (secondPass !== formatted) {
-    return ensureTrailingNewline(normalizedSource.trim());
+    return applyFinalNewlinePreference(
+      ensureTrailingNewline(normalizedSource.trim()),
+      options,
+    );
   }
 
-  return formatted;
+  return applyFinalNewlinePreference(formatted, options);
 }
 
 export function extractElementOrder(source: string): string[] {
@@ -103,9 +141,8 @@ function isLabelSortEnabled(options: unknown): boolean {
   }
   const typed = options as {
     salesforceSortLabelsByFullName?: unknown;
-    salesforceSortLabelEntriesByFullName?: unknown;
   };
-  return typed.salesforceSortLabelsByFullName === true || typed.salesforceSortLabelEntriesByFullName === true;
+  return typed.salesforceSortLabelsByFullName === true;
 }
 
 function getFilepathFromOptions(options: unknown): string | null {
@@ -123,7 +160,8 @@ function sortCustomLabelEntriesByFullName(source: string): string {
     return source;
   }
 
-  const labelsPattern = /<(?:[A-Za-z_][A-Za-z0-9_.-]*:)?labels\b[^>]*>[\s\S]*?<\/(?:[A-Za-z_][A-Za-z0-9_.-]*:)?labels>/g;
+  const labelsPattern =
+    /<(?:[A-Za-z_][A-Za-z0-9_.-]*:)?labels\b[^>]*>[\s\S]*?<\/(?:[A-Za-z_][A-Za-z0-9_.-]*:)?labels>/g;
   const inner = root.inner;
   const labelBlocks = Array.from(inner.matchAll(labelsPattern));
   if (labelBlocks.length < 2) {
@@ -137,7 +175,7 @@ function sortCustomLabelEntriesByFullName(source: string): string {
       text: inner.slice(textStart, labelStart + match[0].length),
       start: textStart,
       end: labelStart + match[0].length,
-      fullName: extractLabelFullName(match[0])
+      fullName: extractLabelFullName(match[0]),
     };
   });
 
@@ -146,7 +184,10 @@ function sortCustomLabelEntriesByFullName(source: string): string {
   }
 
   const sorted = [...extracted].sort((left, right) => {
-    const nameCompare = compareLabelFullNames(left.fullName as string, right.fullName as string);
+    const nameCompare = compareLabelFullNames(
+      left.fullName as string,
+      right.fullName as string,
+    );
     if (nameCompare !== 0) {
       return nameCompare;
     }
@@ -162,7 +203,10 @@ function sortCustomLabelEntriesByFullName(source: string): string {
   return ensureTrailingNewline(replaced.trimEnd());
 }
 
-function findLeadingLabelTriviaStart(source: string, labelStart: number): number {
+function findLeadingLabelTriviaStart(
+  source: string,
+  labelStart: number,
+): number {
   let cursor = labelStart;
   while (cursor > 0) {
     const whitespaceStart = scanWhitespaceBackward(source, cursor);
@@ -183,7 +227,10 @@ function scanWhitespaceBackward(source: string, end: number): number {
   return cursor;
 }
 
-function scanXmlCommentBackward(source: string, end: number): { start: number; end: number } | null {
+function scanXmlCommentBackward(
+  source: string,
+  end: number,
+): { start: number; end: number } | null {
   if (end < "-->".length || !source.slice(0, end).endsWith("-->")) {
     return null;
   }
@@ -219,7 +266,7 @@ function normalizeLabelSortKey(value: string): string {
 function extractLabelFullName(labelBlock: string): string | null {
   const fullNameMatch =
     /<(?:[A-Za-z_][A-Za-z0-9_.-]*:)?fullName\b[^>]*>([\s\S]*?)<\/(?:[A-Za-z_][A-Za-z0-9_.-]*:)?fullName>/.exec(
-      labelBlock
+      labelBlock,
     );
   if (!fullNameMatch) {
     return null;
@@ -228,9 +275,16 @@ function extractLabelFullName(labelBlock: string): string | null {
 }
 
 function extractCustomLabelsRoot(
-  source: string
-): { prefix: string; inner: string; innerStart: number; innerEnd: number } | null {
-  const openMatch = /<([A-Za-z_][A-Za-z0-9_.-]*:)?CustomLabels\b[^>]*>/.exec(source);
+  source: string,
+): {
+  prefix: string;
+  inner: string;
+  innerStart: number;
+  innerEnd: number;
+} | null {
+  const openMatch = /<([A-Za-z_][A-Za-z0-9_.-]*:)?CustomLabels\b[^>]*>/.exec(
+    source,
+  );
   if (!openMatch || openMatch.index === undefined) {
     return null;
   }
@@ -248,7 +302,7 @@ function extractCustomLabelsRoot(
     prefix,
     inner: source.slice(innerStart, innerEnd),
     innerStart,
-    innerEnd
+    innerEnd,
   };
 }
 
@@ -270,7 +324,8 @@ function preservesXmlStructure(original: string, formatted: string): boolean {
 
 function extractXmlNodeSequence(source: string): string[] {
   const sequence: string[] = [];
-  const tagPattern = /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<\/?[A-Za-z_][A-Za-z0-9_.:-]*(?:\s[^<>]*?)?\/?>/g;
+  const tagPattern =
+    /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<\/?[A-Za-z_][A-Za-z0-9_.:-]*(?:\s[^<>]*?)?\/?>/g;
   let cursor = 0;
 
   for (const match of source.matchAll(tagPattern)) {
@@ -294,7 +349,8 @@ function extractXmlNodeSequence(source: string): string[] {
 }
 
 function hasRawTextAngleBracket(source: string): boolean {
-  const tagPattern = /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<\/?[A-Za-z_][A-Za-z0-9_.:-]*(?:\s[^<>]*?)?\/?>/g;
+  const tagPattern =
+    /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<\/?[A-Za-z_][A-Za-z0-9_.:-]*(?:\s[^<>]*?)?\/?>/g;
   let cursor = 0;
   for (const match of source.matchAll(tagPattern)) {
     const start = match.index ?? 0;
@@ -311,11 +367,15 @@ function hasLowConfidenceTextConstructs(source: string): boolean {
     return true;
   }
 
-  const entityAnglePattern = /&(?:lt|gt|#0*60|#0*62|#x0*3[cC]|#X0*3[cC]|#x0*3[eE]|#X0*3[eE]);/;
+  const entityAnglePattern =
+    /&(?:lt|gt|#0*60|#0*62|#x0*3[cC]|#X0*3[cC]|#x0*3[eE]|#X0*3[eE]);/;
   return entityAnglePattern.test(source);
 }
 
-function preservesSiblingBlockStructure(original: string, formatted: string): boolean {
+function preservesSiblingBlockStructure(
+  original: string,
+  formatted: string,
+): boolean {
   const originalBlocks = extractSiblingBlockSignature(original);
   const formattedBlocks = extractSiblingBlockSignature(formatted);
   if (originalBlocks.length !== formattedBlocks.length) {
@@ -329,7 +389,10 @@ function preservesSiblingBlockStructure(original: string, formatted: string): bo
   return true;
 }
 
-function preservesChildSequenceStructure(original: string, formatted: string): boolean {
+function preservesChildSequenceStructure(
+  original: string,
+  formatted: string,
+): boolean {
   const originalSignature = extractChildSequenceSignature(original);
   const formattedSignature = extractChildSequenceSignature(formatted);
   if (originalSignature.length !== formattedSignature.length) {
@@ -343,7 +406,10 @@ function preservesChildSequenceStructure(original: string, formatted: string): b
   return true;
 }
 
-function preservesStartTagAttributeStructure(original: string, formatted: string): boolean {
+function preservesStartTagAttributeStructure(
+  original: string,
+  formatted: string,
+): boolean {
   const originalSignature = extractStartTagAttributeSignature(original);
   const formattedSignature = extractStartTagAttributeSignature(formatted);
   if (originalSignature.length !== formattedSignature.length) {
@@ -357,7 +423,10 @@ function preservesStartTagAttributeStructure(original: string, formatted: string
   return true;
 }
 
-function preservesStartTagAttributeValueShape(original: string, formatted: string): boolean {
+function preservesStartTagAttributeValueShape(
+  original: string,
+  formatted: string,
+): boolean {
   const originalSignature = extractStartTagAttributeValueSignature(original);
   const formattedSignature = extractStartTagAttributeValueSignature(formatted);
   if (originalSignature.length !== formattedSignature.length) {
@@ -373,7 +442,8 @@ function preservesStartTagAttributeValueShape(original: string, formatted: strin
 
 export function extractSiblingBlockSignature(source: string): string[] {
   const signatures: string[] = [];
-  const tagPattern = /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<\/?[A-Za-z_][A-Za-z0-9_.:-]*(?:\s[^<>]*?)?\/?>/g;
+  const tagPattern =
+    /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<\/?[A-Za-z_][A-Za-z0-9_.:-]*(?:\s[^<>]*?)?\/?>/g;
   const stack: string[] = [];
   for (const match of source.matchAll(tagPattern)) {
     const token = match[0].trim();
@@ -406,7 +476,8 @@ export function extractSiblingBlockSignature(source: string): string[] {
 
 export function extractChildSequenceSignature(source: string): string[] {
   const signature: string[] = [];
-  const tagPattern = /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<\/?[A-Za-z_][A-Za-z0-9_.:-]*(?:\s[^<>]*?)?\/?>/g;
+  const tagPattern =
+    /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<\/?[A-Za-z_][A-Za-z0-9_.:-]*(?:\s[^<>]*?)?\/?>/g;
   const stack: string[] = [];
   let cursor = 0;
 
@@ -420,12 +491,16 @@ export function extractChildSequenceSignature(source: string): string[] {
 
     const token = match[0].trim();
     if (token.startsWith("<?")) {
-      signature.push(`${stack.length}|${stack[stack.length - 1] ?? "#root"}|pi`);
+      signature.push(
+        `${stack.length}|${stack[stack.length - 1] ?? "#root"}|pi`,
+      );
       cursor = start + match[0].length;
       continue;
     }
     if (token.startsWith("<!--")) {
-      signature.push(`${stack.length}|${stack[stack.length - 1] ?? "#root"}|comment`);
+      signature.push(
+        `${stack.length}|${stack[stack.length - 1] ?? "#root"}|comment`,
+      );
       cursor = start + match[0].length;
       continue;
     }
@@ -463,7 +538,8 @@ export function extractChildSequenceSignature(source: string): string[] {
 
 export function extractStartTagAttributeSignature(source: string): string[] {
   const signature: string[] = [];
-  const tagPattern = /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<\/?[A-Za-z_][A-Za-z0-9_.:-]*(?:\s[^<>]*?)?\/?>/g;
+  const tagPattern =
+    /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<\/?[A-Za-z_][A-Za-z0-9_.:-]*(?:\s[^<>]*?)?\/?>/g;
   const stack: string[] = [];
 
   for (const match of source.matchAll(tagPattern)) {
@@ -496,9 +572,12 @@ export function extractStartTagAttributeSignature(source: string): string[] {
   return signature;
 }
 
-export function extractStartTagAttributeValueSignature(source: string): string[] {
+export function extractStartTagAttributeValueSignature(
+  source: string,
+): string[] {
   const signature: string[] = [];
-  const tagPattern = /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<\/?[A-Za-z_][A-Za-z0-9_.:-]*(?:\s[^<>]*?)?\/?>/g;
+  const tagPattern =
+    /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<\/?[A-Za-z_][A-Za-z0-9_.:-]*(?:\s[^<>]*?)?\/?>/g;
   const stack: string[] = [];
 
   for (const match of source.matchAll(tagPattern)) {
@@ -549,7 +628,10 @@ function classifyTagToken(tag: string): string {
 }
 
 function extractTagName(tag: string): string {
-  return tag.replace(/^<\//, "<").replace(/^</, "").replace(/[\s/>].*$/, "");
+  return tag
+    .replace(/^<\//, "<")
+    .replace(/^</, "")
+    .replace(/[\s/>].*$/, "");
 }
 
 function extractAttributeNames(tag: string): string[] {
@@ -581,7 +663,8 @@ function extractAttributeNameValuePairs(tag: string): string[] {
     return attrs;
   }
   const attrSource = tagBody.slice(firstSpace + 1);
-  const attrPattern = /([A-Za-z_:][A-Za-z0-9_.:-]*)\s*=\s*("([^"]*)"|'([^']*)')/g;
+  const attrPattern =
+    /([A-Za-z_:][A-Za-z0-9_.:-]*)\s*=\s*("([^"]*)"|'([^']*)')/g;
   for (const match of attrSource.matchAll(attrPattern)) {
     const name = match[1];
     const rawValue = match[2] ?? "";

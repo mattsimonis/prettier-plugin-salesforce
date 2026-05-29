@@ -1,45 +1,89 @@
-# Release Gate
+# Pre-Release Gate
 
-Run these commands before publishing:
+Run the gate before the first publish and before each later publish.
+
+## Prerequisites
+
+Install dependencies from the repository root:
 
 ```sh
 pnpm install
+```
+
+Optional environment variables:
+
+- `SF_PRETTIER_CORPUS_ROOT`: main Salesforce corpus root.
+- `SF_PRETTIER_EXTRA_CORPUS_ROOTS`: comma-separated extra corpus roots.
+- `SF_PRETTIER_BENCH_ROOT`: benchmark input root. Defaults to
+  `packages/prettier-plugin-salesforce/tests`.
+
+## Command
+
+```sh
 pnpm release:check
+```
+
+The release gate runs:
+
+1. `pnpm build`
+2. `pnpm --filter @prettier-salesforce/benchmarks test`
+3. `pnpm --filter prettier-plugin-salesforce test`
+4. `pnpm lint`
+5. `pnpm --filter prettier-plugin-salesforce exec npm pack --dry-run --json`
+6. `pnpm --filter @prettier-salesforce/benchmarks bench "$SF_PRETTIER_BENCH_ROOT" --plugin --release`
+
+Run the same pieces by hand when narrowing a failure:
+
+```sh
+pnpm build
+pnpm --filter @prettier-salesforce/benchmarks test
+pnpm --filter prettier-plugin-salesforce test
+pnpm lint
+pnpm --filter prettier-plugin-salesforce exec npm pack --dry-run --json
+pnpm --filter @prettier-salesforce/benchmarks bench packages/prettier-plugin-salesforce/tests --plugin --release
 ```
 
 ## Required Evidence
 
-- warm Apex single-file time under 50 ms
-- save-on-format path under 100 ms on sample Apex, LWC HTML, Visualforce, and metadata XML
-- corpus smoke passes
-- corpus route invariants pass for supported families (`.cls`, `.trigger`, `.page`, `.component`, `.cmp`, LWC `.js`, optional LWC `.html` when present, metadata `.xml`)
-- payload text routes stay pinned (`.email`, `.resource`, `.asset`, Agentforce authoring payloads in AI bundle paths, and `.forceignore` -> `payload-text`)
-- ordinary project text routes stay outside Salesforce ownership (`.txt`, `.cfg`, `.sql`, `.soql`, `.csv`, `.log`, `.notes`, `.dwl`, `.schema`, scripts, `.env`, `.toml`, lockfiles, CODEOWNERS, and hooks -> `unknown` or Prettier core)
-- metadata family routes stay pinned (`.labels` and `.object` under metadata-family paths -> `metadata-xml`; legacy family suffixes such as `.namedCredential` and `.remoteSite` -> `metadata-xml`)
-- corpus contracts stay green: `project-pack-intentional-unknown-policy-contract`, `project-pack-salesforce-text-route-contract`, and `project-pack-unknown-binary-frontier-contract`
-- metadata frontier ledgers stay complete for corpora (`primaryCorpus-metadata-frontier-triage-contract`, `project-pack-metadata-frontier-triage-contract`)
-- metadata frontier emptiness checks stay green (`project-pack-metadata-frontier-directory-emptiness-contract`)
-- metadata extension routing checks stay green (`project-pack-metadata-extension-route-contract`)
-- Salesforce Apex/markup/text/metadata/core inference checks stay green (`project-pack-salesforce-apex-inference-contract`, `project-pack-salesforce-markup-inference-contract`, `project-pack-salesforce-text-route-contract`, `project-pack-salesforce-metadata-inference-contract`, `project-pack-salesforce-core-inference-contract`)
-- non-unknown inference-null frontier stays pinned to approved exceptions (`project-pack-nonunknown-inference-null-frontier-contract`)
-- unknown extension inventory stays explicit (`project-pack-unknown-extension-inventory-contract`)
-- benchmark family table checks pass: `apex`, `markup`, `xml`, and `other` rows stay present with non-negative counters
-- metadata fallback matrix stays complete across families with parallel `encoded`, `encoded+cdata`, and `mixed` variants where practical
-- full benchmark report attached to release notes
-- npm pack dry run includes package README, license, browser build, audit entrypoints, and package export map
-- no Java or HTTP server in default path
-- format-twice idempotence passes
+- Warm Apex single-file time stays under 50 ms.
+- Save-on-format path stays under 100 ms on sample Apex, LWC HTML, Visualforce, and metadata XML.
+- Corpus smoke and route-invariant tests pass.
+- Format-twice idempotence passes.
+- Benchmark family table includes `apex`, `markup`, `xml`, and `other` rows with non-negative counters.
+- Metadata XML fallback matrix stays complete across the guarded families.
+- Payload text routes stay pinned for `.email`, `.resource`, `.asset`, Agentforce authoring payloads, and `.forceignore`.
+- Ordinary project text routes stay outside Salesforce ownership.
+- Metadata family routes stay pinned for `.labels`, `.object`, and metadata suffixes.
+- Npm pack dry run includes the package README, license, browser build, audit entrypoints, and package export map.
+- Default formatting path uses no Java process or HTTP server.
+- Full benchmark report is attached to the release pull request or publish notes.
 
-## Support Status Snapshot
+## Evidence Files
 
-Current full paths:
+Release artifacts are written under `.release-evidence/`:
 
-- Apex `.cls`, `.trigger`, and anonymous Apex `.apex` on in-process parser/printer path
-- Visualforce and Aura markup formatting with dialect-aware inline-expression safety rules
-- LWC template HTML formatting only for `.html` paths in an `lwc` path segment
-- Metadata XML conservative formatter for Salesforce metadata `.xml` paths with declaration/comment/order safeguards
+- `benchmark.json`
 
-Current limited paths:
+The JSON report is the machine-readable gate input. Attach it, or a short
+summary made from it, to the release pull request or publish notes.
 
-- Metadata XML keeps original text when safety checks fail (raw text `<`, order drift risk, attribute-shape drift, or non-idempotent second pass)
-- Markup inline-expression expansion applies only to safe single-line expression blocks; other inline text stays as-is
+## Supported Paths
+
+Full formatter paths:
+
+- Apex `.cls`, `.trigger`, and anonymous Apex `.apex` use the in-process parser and printer.
+- Visualforce and Aura markup use dialect-aware inline-expression safety rules.
+- LWC template HTML formats only for `.html` paths in an `lwc` path segment.
+- Salesforce metadata XML uses a conservative formatter with declaration, comment, and order safeguards.
+
+Guarded formatter paths:
+
+- Metadata XML keeps original text when safety checks fail.
+- Markup inline-expression expansion applies only to safe single-line expression blocks.
+- Shared extensions route by Salesforce path. Ordinary project files remain outside plugin ownership.
+
+## Failure Policy
+
+The package is not ready to publish if any gate command fails or if the
+benchmark report shows a hard budget failure. Soft warnings should be called out
+when they reflect known corpus or environment differences.

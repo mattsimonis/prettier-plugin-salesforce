@@ -52,6 +52,394 @@ describe("apex printer", () => {
     expect(formatted).toBe("public class Empty {\n}\n");
   });
 
+  it("keeps @TestVisible on its own line by default and supports inline placement", async () => {
+    const source = "public class C{@TestVisible public String Name{get;set;}@TestVisible public void run(){}}\n";
+    const ownLine = await prettier.format(source, {
+      parser: "salesforce-apex",
+      plugins: [plugin]
+    });
+    const inline = await prettier.format(source, {
+      parser: "salesforce-apex",
+      salesforceTestVisiblePlacement: "inline",
+      plugins: [plugin]
+    });
+
+    expect(ownLine).toBe("public class C {\n  @TestVisible\n  public String Name { get; set; }\n\n  @TestVisible\n  public void run() {\n  }\n}\n");
+    expect(inline).toBe("public class C {\n  @TestVisible public String Name { get; set; }\n\n  @TestVisible\n  public void run() {\n  }\n}\n");
+  });
+
+  it("adds a blank line between code and following block docs", async () => {
+    const formatted = await prettier.format("public class C{private String value;/** doc */public void run(){}}\n", {
+      parser: "salesforce-apex",
+      plugins: [plugin]
+    });
+
+    expect(formatted).toBe("public class C {\n  private String value;\n\n  /** doc */\n  public void run() {\n  }\n}\n");
+  });
+
+  it("can add blank lines before standalone line comments except first comments in a block", async () => {
+    const formatted = await prettier.format("public class C{void run(){\n// first\nwork();\n// middle\nother();}}\n", {
+      parser: "salesforce-apex",
+      salesforceBlankLineBeforeLineComment: true,
+      plugins: [plugin]
+    });
+
+    expect(formatted).toBe("public class C {\n  void run() {\n    // first\n    work();\n\n    // middle\n    other();\n  }\n}\n");
+  });
+
+  it("does not split consecutive standalone line comments with blank lines", async () => {
+    const formatted = await prettier.format("public class C{void run(){work();\n// first\n// second\nother();}}\n", {
+      parser: "salesforce-apex",
+      salesforceBlankLineBeforeLineComment: true,
+      plugins: [plugin]
+    });
+
+    expect(formatted).toBe("public class C {\n  void run() {\n    work();\n\n    // first\n    // second\n    other();\n  }\n}\n");
+  });
+
+  it("does not add a blank line between a block comment and a following line comment", async () => {
+    const formatted = await prettier.format(
+      "public class C{\n/**\n * @description Determines if a cart payment is accepted.\n * @param cartPayment The cart payment being checked.\n * @return True if the payment is not accepted, false if it is.\n */\n\n// TODO: AMS-6600 - This double negative can be changed.\npublic Boolean isPaymentNotAccepted(){return false;}}\n",
+      {
+        parser: "salesforce-apex",
+        salesforceBlankLineBeforeLineComment: true,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toBe(
+      "public class C {\n  /**\n   * @description Determines if a cart payment is accepted.\n   * @param cartPayment The cart payment being checked.\n   * @return True if the payment is not accepted, false if it is.\n   */\n  // TODO: AMS-6600 - This double negative can be changed.\n  public Boolean isPaymentNotAccepted() {\n    return false;\n  }\n}\n"
+    );
+  });
+
+  it("keeps static singleton access with the class before wrapping the following method call", async () => {
+    const formatted = await prettier.format(
+      "public class C{void run(){List<DeferredSchedule__c> newSchedules=DeferredScheduleService.Instance.handleDeferredSchedules(generationResult,oilDeferredScheduleContexts);}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 120,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toBe(
+      "public class C {\n  void run() {\n    List<DeferredSchedule__c> newSchedules = DeferredScheduleService.Instance.handleDeferredSchedules(\n      generationResult,\n      oilDeferredScheduleContexts\n    );\n  }\n}\n"
+    );
+  });
+
+  it("wraps singleton method-call arguments after keeping the receiver and method on the first line", async () => {
+    const formatted = await prettier.format(
+      "public class C{void run(){ScheduleService.Instance.reparentSchedules(cartIdToSubmit,getIdFromSObject(convertedOrder),submissionResult.result);BusinessEventsService.Instance.handleBusinessEventByLabel(ORDER_FULLY_UPSERTED_BUSINESS_EVENT,convertedOrder.Id);}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 100,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toBe(
+      "public class C {\n  void run() {\n    ScheduleService.Instance.reparentSchedules(\n      cartIdToSubmit,\n      getIdFromSObject(convertedOrder),\n      submissionResult.result\n    );\n    BusinessEventsService.Instance.handleBusinessEventByLabel(\n      ORDER_FULLY_UPSERTED_BUSINESS_EVENT,\n      convertedOrder.Id\n    );\n  }\n}\n"
+    );
+  });
+
+  it("wraps singleton calls with one long argument at the opening paren", async () => {
+    const formatted = await prettier.format(
+      "public class C{void run(Exception ex){submissionResult.result.addErrorMessage('An error occurred while generating transactions: '+ex.getMessage());}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 100,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toBe(
+      "public class C {\n  void run(Exception ex) {\n    submissionResult.result.addErrorMessage(\n      'An error occurred while generating transactions: ' + ex.getMessage()\n    );\n  }\n}\n"
+    );
+  });
+
+  it("keeps existing left-hand side and singleton access together for assignment chains", async () => {
+    const formatted = await prettier.format(
+      "public class C{void run(){result.deferredOrderItemLines=DeferredScheduleService.Instance.setOrderItemLineDeferredScheduleIds(oilDeferredScheduleContexts.values());}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 120,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toBe(
+      "public class C {\n  void run() {\n    result.deferredOrderItemLines = DeferredScheduleService.Instance\n      .setOrderItemLineDeferredScheduleIds(oilDeferredScheduleContexts.values());\n  }\n}\n"
+    );
+  });
+
+  it("aligns wrapped list initializer call suffixes without inserting a space before index access", async () => {
+    const formatted = await prettier.format(
+      "public class C{Object run(){return this.generate(new List<TransactionGenerator.TransactionGenerationRequest>{request})[0];}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 80,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toBe(
+      "public class C {\n  Object run() {\n    return this.generate(\n      new List<TransactionGenerator.TransactionGenerationRequest> {\n        request\n      }\n    )[0];\n  }\n}\n"
+    );
+  });
+
+  it("wraps long method parameter lists when printWidth is exceeded", async () => {
+    const formatted = await prettier.format(
+      "public class Width{public void run(String firstName,String secondName,String thirdName,String fourthName){System.debug(firstName);}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 60,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toBe(
+      "public class Width {\n  public void run(\n    String firstName,\n    String secondName,\n    String thirdName,\n    String fourthName\n  ) {\n    System.debug(firstName);\n  }\n}\n"
+    );
+  });
+
+  it("keeps semicolons attached to wrapped closing parens", async () => {
+    const formatted = await prettier.format(
+      "public class Width{public void run(){System.debug(firstArgumentValue,secondArgumentValue,thirdArgumentValue,fourthArgumentValue);}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 60,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toContain("    );\n");
+    expect(formatted).not.toContain(") ;");
+  });
+
+  it("wraps method call arguments at the opening paren when an argument is a small set initializer", async () => {
+    const formatted = await prettier.format(
+      "public class Width{public void run(){List<SObject> providers=ProviderService.getProvidersByExternalId(new Set<String>{deaScan.providerId},mapping);}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 80,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toBe(
+      "public class Width {\n  public void run() {\n    List<SObject> providers = ProviderService.getProvidersByExternalId(\n      new Set<String> { deaScan.providerId },\n      mapping\n    );\n  }\n}\n"
+    );
+  });
+
+  it("wraps assigned constructor field arguments without splitting simple field access values", async () => {
+    const formatted = await prettier.format(
+      "public class Width{public void run(CartPayment__c cartPaymentToConvert, Id billToId){Payment__c payment=new Payment__c(PaymentAmount__c=cartPaymentToConvert.PaymentAmount__c*-1,Note__c=cartPaymentToConvert.Note__c,EntityPaymentMethod__c=cartPaymentToConvert.EntityPaymentMethod__c,Payer__c=billToId,IsCredit__c=true);}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 100,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toContain(
+      "    Payment__c payment = new Payment__c(\n      PaymentAmount__c = cartPaymentToConvert.PaymentAmount__c * -1,\n      Note__c = cartPaymentToConvert.Note__c,\n      EntityPaymentMethod__c = cartPaymentToConvert.EntityPaymentMethod__c,\n      Payer__c = billToId,\n      IsCredit__c = true\n    );\n"
+    );
+  });
+
+  it("wraps long fluent chains before dots when printWidth is exceeded", async () => {
+    const formatted = await prettier.format(
+      "public class Width{public void run(){Account result=builder.withCustomerName('Acme').withBillingCountry('US').withDefaultOwner(UserInfo.getUserId()).save();}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 70,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toBe(
+      "public class Width {\n  public void run() {\n    Account result = builder\n      .withCustomerName('Acme')\n      .withBillingCountry('US')\n      .withDefaultOwner(UserInfo.getUserId())\n      .save();\n  }\n}\n"
+    );
+  });
+
+  it("wraps long binary expressions with logical operators at the end of lines by default", async () => {
+    const formatted = await prettier.format(
+      "public class Width{public void run(){Boolean allowed=firstCondition && secondCondition && thirdCondition && fourthCondition;}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 70,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toBe(
+      "public class Width {\n  public void run() {\n    Boolean allowed = firstCondition &&\n      secondCondition &&\n      thirdCondition &&\n      fourthCondition;\n  }\n}\n"
+    );
+  });
+
+  it("can wrap long binary expressions with logical operators at the start of lines", async () => {
+    const formatted = await prettier.format(
+      "public class Width{public void run(){Boolean allowed=firstCondition && secondCondition && thirdCondition && fourthCondition;}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 70,
+        salesforceLogicalOperatorPosition: "start-of-line",
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toBe(
+      "public class Width {\n  public void run() {\n    Boolean allowed = firstCondition\n      && secondCondition\n      && thirdCondition\n      && fourthCondition;\n  }\n}\n"
+    );
+  });
+
+  it("keeps comparison clauses whole and expands parenthesized return disjunctions", async () => {
+    const formatted = await prettier.format(
+      "public class Width{Boolean run(CartItem__c cartItemToConvert){return cartItemToConvert != null && cartItemToConvert.OrderItem__c != null && (hasAddressChanged(cartItemToConvert) || cartItemToConvert.Customer__c != cartItemToConvert.OrderItem__r.Customer__c || cartItemToConvert.PriceClass__c != cartItemToConvert.OrderItem__r.PriceClass__c || cartItemToConvert.Recurring__c != cartItemToConvert.OrderItem__r.Recurring__c || cartItemToConvert.TotalShipping__c != cartItemToConvert.OrderItem__r.TotalShipping__c || cartItemToConvert.TotalTax__c != cartItemToConvert.OrderItem__r.TotalTax__c || cartItemToConvert.SalesTax__c != cartItemToConvert.OrderItem__r.SalesTax__c || this.isCartItemRecurringDataAdjusted(cartItemToConvert));}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 120,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toContain(
+      "    return cartItemToConvert != null && cartItemToConvert.OrderItem__c != null &&\n      (hasAddressChanged(cartItemToConvert) ||\n        cartItemToConvert.Customer__c != cartItemToConvert.OrderItem__r.Customer__c ||\n        cartItemToConvert.PriceClass__c != cartItemToConvert.OrderItem__r.PriceClass__c ||\n        cartItemToConvert.Recurring__c != cartItemToConvert.OrderItem__r.Recurring__c ||\n        cartItemToConvert.TotalShipping__c != cartItemToConvert.OrderItem__r.TotalShipping__c ||\n        cartItemToConvert.TotalTax__c != cartItemToConvert.OrderItem__r.TotalTax__c ||\n        cartItemToConvert.SalesTax__c != cartItemToConvert.OrderItem__r.SalesTax__c ||\n        this.isCartItemRecurringDataAdjusted(cartItemToConvert));\n"
+    );
+  });
+
+  it("wraps long if conditions with the first condition segment on its own line", async () => {
+    const formatted = await prettier.format(
+      "public class Width{public void run(){if(!orderItemByCartItemId.isEmpty()&&(hasNewPurchaseCartItems||hasOrderAdjustments||AdjustmentVersionService.Instance.isEnabled())){work();}}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 100,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toContain(
+      "    if (\n      !orderItemByCartItemId.isEmpty() &&\n      (hasNewPurchaseCartItems ||\n        hasOrderAdjustments ||\n        AdjustmentVersionService.Instance.isEnabled())\n    ) {\n"
+    );
+  });
+
+  it("wraps ternary assignments without splitting simple field and constant access", async () => {
+    const formatted = await prettier.format(
+      "public class Width{public void run(Cart__c cartToSubmit){Id cartEntityId=cartToSubmit.AdjustmentEntity__c==null?cartToSubmit.Entity2__c:cartToSubmit.AdjustmentEntity__c;String batchSource=SystemUtil.isCommunityUser()||SystemUtil.isGuestUser()?Constant.BATCH_SOURCE_SELF_SERVICE:Constant.BATCH_SOURCE_SALESFORCE;}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 110,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toContain(
+      "    Id cartEntityId = cartToSubmit.AdjustmentEntity__c == null ? cartToSubmit.Entity2__c :\n      cartToSubmit.AdjustmentEntity__c;\n"
+    );
+    const roomy = await prettier.format(
+      "public class Width{public void run(){String batchSource=SystemUtil.isCommunityUser()||SystemUtil.isGuestUser()?Constant.BATCH_SOURCE_SELF_SERVICE:Constant.BATCH_SOURCE_SALESFORCE;}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 140,
+        plugins: [plugin]
+      }
+    );
+
+    expect(roomy).toContain(
+      "    String batchSource = SystemUtil.isCommunityUser() || SystemUtil.isGuestUser() ? Constant.BATCH_SOURCE_SELF_SERVICE :\n      Constant.BATCH_SOURCE_SALESFORCE;\n"
+    );
+  });
+
+  it("keeps field and constant access whole when wrapping logical returns", async () => {
+    const formatted = await prettier.format(
+      "public class Width{Boolean active(CartItem__c cartItem){return cartItem!=null&&cartItem.OrderItem__c!=null&&cartItem.OrderItem__r.Status__c==Constant.ORDER_ITEM_STATUS_ACTIVE;}Boolean sameLine(CartItemLine__c cartItemLine,OrderItemLine__c orderItemLine,Map<Id,OrderItemLine__c> cartItemLineToOrderItemLineMap){return cartItemLine.OrderItemLine__c==orderItemLine.Id||(cartItemLineToOrderItemLineMap.containsKey(cartItemLine.Id)&&cartItemLineToOrderItemLineMap.get(cartItemLine.Id).Id==orderItemLine.Id);}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 45,
+        salesforceLogicalOperatorPosition: "start-of-line",
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toContain(
+      "    return cartItem != null\n      && cartItem.OrderItem__c != null\n      && cartItem.OrderItem__r.Status__c == Constant.ORDER_ITEM_STATUS_ACTIVE;\n"
+    );
+    expect(formatted).toContain(
+      "    return cartItemLine.OrderItemLine__c == orderItemLine.Id\n      || (cartItemLineToOrderItemLineMap.containsKey(cartItemLine.Id)\n        && cartItemLineToOrderItemLineMap.get(cartItemLine.Id).Id == orderItemLine.Id);\n"
+    );
+  });
+
+  it("wraps return parenthesized logical groups without removing the return space", async () => {
+    const formatted = await prettier.format(
+      "public class Width{Boolean run(CartPayment__c cartPayment){return (cartPayment.EntityPaymentMethod__r.PaymentMethod__r.IsPayment__c==false&&cartPayment.EntityPaymentMethod__r.PaymentMethod__r.RecordType.Name!=Constant.PAYMENT_METHOD_TYPE_TRANSFER)||cartPayment.Payment__c!=null;}}\n",
+      {
+        parser: "salesforce-apex",
+        printWidth: 120,
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toContain(
+      "    return (\n      cartPayment.EntityPaymentMethod__r.PaymentMethod__r.IsPayment__c == false &&\n      cartPayment.EntityPaymentMethod__r.PaymentMethod__r.RecordType.Name != Constant.PAYMENT_METHOD_TYPE_TRANSFER\n    ) || cartPayment.Payment__c != null;\n"
+    );
+  });
+
+  it("wraps large real-world Apex constructs at the configured printWidth", async () => {
+    const source =
+      "public class Width{public void run(){if(((String) currentVerification?.get('trigger') == 'Monitor' && (eventType == 'VerificationCompleted' || eventType == 'DatasetScanCompleted')) || ((String) parsedReqBody?.get('status') == 'Active' && eventType == 'DatasetScanMatchesChanged')){work();}for(Sanction_Exclusion_Scan__c oldScan:SanctionExclusionScansSelector.newInstance().selectLatestScansByProviderVuidAndType(providerVuid,datasetType)){work();}List<Sanction_Exclusion_Scan__c> existingScans=[SELECT Id FROM Sanction_Exclusion_Scan__c WHERE Verifiable_External_Id__c=:scanToUpsert.Verifiable_External_Id__c ORDER BY VerifiedAt__c DESC LIMIT 1];throw new webhook.WebhookRecordNotFoundException('Unable to locate Provider Credentialing Event: ['+reportModel.credentialingRequestId+']');ActionRequest__c fileRequest=new ActionRequest__c(ActionName__c=constants.ACTIONREQUEST_ACTION_NAME_GETPROFILEFILE,Payload__c=JSON.serialize(new Map<String,String>{'filePath'=>importModel.profile.profileDocumentFilePath,'importId'=>importModel.id}));when 'Sam','OigFugitives','OigExclusions','OfacSdn','OfacConsolidated','StateSanctionsAndExclusions','CmsPreclusion'{work();}}}\n";
+    const formatted = await prettier.format(source, {
+      parser: "salesforce-apex",
+      printWidth: 120,
+      plugins: [plugin]
+    });
+
+    const longLines = formatted.split("\n").filter((line) => line.length > 120);
+    expect(longLines).toEqual([]);
+  });
+
+  it("removes odd interior spaces around member access and generic type punctuation", async () => {
+    const formatted = await prettier.format(
+      "public class Spaces{public void run(){List < String > names=new List < String >();Map < String , Integer > ages=new Map < String , Integer >{'Ann'=>32};System . debug(names);}}\n",
+      {
+        parser: "salesforce-apex",
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toBe(
+      "public class Spaces {\n  public void run() {\n    List<String> names = new List<String>();\n    Map<String, Integer> ages = new Map<String, Integer> { 'Ann' => 32 };\n    System.debug(names);\n  }\n}\n"
+    );
+  });
+
+  it("removes odd generic type spaces in enhanced for-loop headers", async () => {
+    const formatted = await prettier.format(
+      "public class Spaces{public void run(Map<Id,List<CartItemLine__c>> couponCartItemLinesByCartItemId){for(List<CartItemLine__c> couponCartItemLines:couponCartItemLinesByCartItemId.values()){cartItemLines.addAll(couponCartItemLines);}}}\n",
+      {
+        parser: "salesforce-apex",
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toContain(
+      "    for (List<CartItemLine__c> couponCartItemLines : couponCartItemLinesByCartItemId.values()) {\n"
+    );
+    expect(formatted).not.toContain("List < CartItemLine__c >");
+  });
+
+  it("preserves deliberate blank lines between statements", async () => {
+    const source =
+      "public class Sections{public void run(){TransactionGenerator.TransactionGenerationRequest request=new TransactionGenerator.TransactionGenerationRequest();\n\nrequest.Name='A';}}\n";
+    const formatted = await prettier.format(source, {
+      parser: "salesforce-apex",
+      plugins: [plugin]
+    });
+    const second = await prettier.format(formatted, { parser: "salesforce-apex", plugins: [plugin] });
+
+    expect(second).toBe(formatted);
+    expect(formatted).toContain(
+      "    TransactionGenerator.TransactionGenerationRequest request = new TransactionGenerator.TransactionGenerationRequest();\n\n    request.Name = 'A';\n"
+    );
+  });
+
   it("preserves leading file header comments before declarations", async () => {
     const source = "// Copyright Example\n/* package note */\npublic class Demo{}\n";
     const formatted = await prettier.format(source, {
@@ -70,6 +458,55 @@ describe("apex printer", () => {
 
     expect(formatted).toBe(
       "public class Loop {\n  public void run() {\n    for (Integer i = 0; i < 3; i++) {\n      if (i == 1) {\n        continue;\n      } else {\n        System.debug(i);\n      }\n    }\n  }\n}\n"
+    );
+  });
+
+  it("keeps simple get/set properties on one line", async () => {
+    const formatted = await prettier.format("public class Property{public String HelloWorld{get;set;}}\n", {
+      parser: "salesforce-apex",
+      plugins: [plugin]
+    });
+
+    expect(formatted).toBe("public class Property {\n  public String HelloWorld { get; set; }\n}\n");
+  });
+
+  it("keeps trailing line comments attached to their code", async () => {
+    const formatted = await prettier.format(
+      "public class ConstructorComment{public ConstructorComment(){this(exampleRecord1,test12344);// this calls the other constructor\n}}\n",
+      {
+        parser: "salesforce-apex",
+        plugins: [plugin]
+      }
+    );
+
+    expect(formatted).toContain("    this(exampleRecord1, test12344); // this calls the other constructor\n");
+  });
+
+  it("keeps annotated properties split from annotations with blank lines between members", async () => {
+    const source =
+      "/**\n" +
+      " * DTO sample doc\n" +
+      " */\n" +
+      "public class FacilitySample{\n" +
+      "@AuraEnabled\n" +
+      "public Id seRecordId{get;set;}\n" +
+      "@AuraEnabled\n" +
+      "public String seType{get;set;}\n" +
+      "// Constructor from FacilitySE__c\n" +
+      "public FacilitySample(FacilitySE__c facilitySE){}\n" +
+      "/**\n" +
+      " * Static method to convert rows\n" +
+      " */\n" +
+      "public static List<FacilitySample> fromRows(List<FacilitySE__c> rows){return new List<FacilitySample>();}\n" +
+      "private static Datetime getScanVerifiedAt(Sanction_Exclusion_Scan__c scan){return scan.Started__c;}\n" +
+      "}\n";
+    const formatted = await prettier.format(source, {
+      parser: "salesforce-apex",
+      plugins: [plugin]
+    });
+
+    expect(formatted).toBe(
+      "/**\n * DTO sample doc\n */\npublic class FacilitySample {\n  @AuraEnabled\n  public Id seRecordId { get; set; }\n\n  @AuraEnabled\n  public String seType { get; set; }\n\n  // Constructor from FacilitySE__c\n  public FacilitySample(FacilitySE__c facilitySE) {\n  }\n\n  /**\n   * Static method to convert rows\n   */\n  public static List<FacilitySample> fromRows(List<FacilitySE__c> rows) {\n    return new List<FacilitySample>();\n  }\n\n  private static Datetime getScanVerifiedAt(Sanction_Exclusion_Scan__c scan) {\n    return scan.Started__c;\n  }\n}\n"
     );
   });
 
@@ -128,7 +565,7 @@ describe("apex printer", () => {
     );
 
     expect(formatted).toBe(
-      "public class C {\n  public void run(Boolean flag) {\n    do {\n      work();\n    }\n    // keep tail\n    while (flag);\n  }\n}\n"
+      "public class C {\n  public void run(Boolean flag) {\n    do {\n      work();\n    } // keep tail\n    while (flag);\n  }\n}\n"
     );
   });
 
@@ -150,7 +587,7 @@ describe("apex printer", () => {
     );
 
     expect(formatted).toBe(
-      "public class C {\n  public void run(Boolean flag) {\n    do {\n      work();\n    } while\n    /* probe */\n    (flag)\n    // keep\n    ;\n  }\n}\n"
+      "public class C {\n  public void run(Boolean flag) {\n    do {\n      work();\n    } while\n    /* probe */\n    (flag) // keep\n    ;\n  }\n}\n"
     );
   });
 
@@ -262,7 +699,7 @@ describe("apex printer", () => {
 
     expect(second).toBe(first);
     expect(first).toBe(
-      "public class Docs {\n  /** class method */\n  public void first() {\n  }\n  /** second method */\n  public void second() {\n  }\n  public class Inner {\n    /** inner property */\n    public String Name {\n      get;\n      set;\n    }\n    /** inner method */\n    public void run() {\n    }\n  }\n}\n"
+      "public class Docs {\n  /** class method */\n  public void first() {\n  }\n\n  /** second method */\n  public void second() {\n  }\n\n  public class Inner {\n    /** inner property */\n    public String Name { get; set; }\n\n    /** inner method */\n    public void run() {\n    }\n  }\n}\n"
     );
   });
 
@@ -320,7 +757,7 @@ describe("apex printer", () => {
 
     expect(second).toBe(first);
     expect(first).toBe(
-      "/**class doc*/\n@IsTest\nprivate with sharing class DocsAndAnno {\n  /**method doc*/\n  @AuraEnabled(cacheable = true)\n  public static String loadName(Id accountId) {\n    return 'A';\n  }\n  /**prop doc*/\n  @TestVisible\n  private static String token {\n    get;\n    set;\n  }\n}\n"
+      "/**class doc*/\n@IsTest\nprivate with sharing class DocsAndAnno {\n  /**method doc*/\n  @AuraEnabled(cacheable = true)\n  public static String loadName(Id accountId) {\n    return 'A';\n  }\n\n  /**prop doc*/\n  @TestVisible\n  private static String token { get; set; }\n}\n"
     );
   });
 
@@ -348,7 +785,7 @@ describe("apex printer", () => {
 
     expect(second).toBe(first);
     expect(first).toBe(
-      "/**outer doc*/\n@IsTest\nprivate class OuterDecl {\n  /**inner interface doc*/\n  @TestVisible\n  private interface InnerApi {\n    void run();\n  }\n  /**inner enum doc*/\n  private enum Mode {\n    Fast, Slow\n  }\n  /**inner class doc*/\n  @TestVisible\n  private class InnerWorker {\n    public void exec() {\n      System.debug('x');\n    }\n  }\n}\n"
+      "/**outer doc*/\n@IsTest\nprivate class OuterDecl {\n  /**inner interface doc*/\n  @TestVisible\n  private interface InnerApi {\n    void run();\n  }\n\n  /**inner enum doc*/\n  private enum Mode {\n    Fast, Slow\n  }\n\n  /**inner class doc*/\n  @TestVisible\n  private class InnerWorker {\n    public void exec() {\n      System.debug('x');\n    }\n  }\n}\n"
     );
   });
 
@@ -360,7 +797,7 @@ describe("apex printer", () => {
 
     expect(second).toBe(first);
     expect(first).toBe(
-      "public class StackedShape {\n  /** inner interface */\n  @TestVisible\n  @Deprecated\n  private interface Runner {\n    /** run doc */\n    @AuraEnabled(cacheable = true)\n    @Deprecated\n    public String run(Integer x);\n  }\n  /** enum doc */\n  private enum Mode {\n    /** fast doc */\n    @Deprecated\n    FAST('A'),\n    /** slow doc */\n    @Deprecated\n    SLOW('B');\n    private final String code;\n    private Mode(String value) {\n      code = value;\n    }\n  }\n}\n"
+      "public class StackedShape {\n  /** inner interface */\n  @TestVisible\n  @Deprecated\n  private interface Runner {\n    /** run doc */\n    @AuraEnabled(cacheable = true)\n    @Deprecated\n    public String run(Integer x);\n  }\n\n  /** enum doc */\n  private enum Mode {\n    /** fast doc */\n    @Deprecated\n    FAST('A'),\n    /** slow doc */\n    @Deprecated\n    SLOW('B');\n    private final String code;\n    private Mode(String value) {\n      code = value;\n    }\n  }\n}\n"
     );
   });
 

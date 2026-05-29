@@ -10,7 +10,7 @@ describe("package surface contract", () => {
     const manifest = readPackageJson();
 
     expect(manifest.exports).toEqual({
-      ".": { types: "./dist/index.d.ts", import: "./dist/index.js" },
+      ".": { types: "./dist/index.d.ts", import: "./dist/index.js", default: "./dist/index.js" },
       "./browser": { types: "./dist/browser.d.ts", import: "./dist/browser.js" },
       "./audit": { types: "./dist/config-audit-cli.d.ts", import: "./dist/config-audit-cli.js" },
       "./config-audit": { types: "./dist/config-audit.d.ts", import: "./dist/config-audit.js" },
@@ -18,6 +18,13 @@ describe("package surface contract", () => {
       "./config-audit/cli": { types: "./dist/config-audit-cli.d.ts", import: "./dist/config-audit-cli.js" },
       "./package.json": "./package.json"
     });
+  });
+
+  it("uses the Prettier doc subpath that works in Prettier 2 and 3", () => {
+    const routerSource = readFileSync(path.join(PACKAGE_ROOT, "src", "printers", "router.ts"), "utf8");
+
+    expect(routerSource).toContain('from "prettier/doc.js"');
+    expect(routerSource).not.toContain('from "prettier/doc"');
   });
 
   it("keeps config audit parser dependencies available at runtime", () => {

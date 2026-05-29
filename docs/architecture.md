@@ -9,12 +9,11 @@ comments, source ranges, diagnostics, and a stable document shape without Java
 or a side server. A tree-sitter WASM package remains the packaging target once
 the grammar bundle is produced.
 
-## Why Not Jorje
+## Why Not a Java Parser Process
 
-The old formatter asks `jorje` for an AST through a Java/native serializer. That
-keeps platform parse fidelity, but it costs process startup, server setup, and
-large AST repair work. A normal Prettier formatter should not need a side
-process for save-on-format.
+Java-based Apex parsing keeps platform parse fidelity, but it costs process
+startup, server setup, and large AST repair work. A normal Prettier formatter
+should not need a side process for save-on-format.
 
 ## Why Primary corpus Parser Material
 
@@ -24,8 +23,8 @@ all tokens, comments, syntax errors, and stable ranges.
 
 ## Current Behavior After Safety Waves
 
-The Apex path keeps source tokens in-process and now has explicit ApexDoc
-attachment handling for declarations and inner members.
+The Apex path keeps source tokens in-process and has explicit ApexDoc attachment
+handling for declarations and inner members.
 
 The markup path detects Visualforce, Aura, and LWC dialects from tag patterns.
 Formatting starts with tag-shape layout, then applies dialect rules only when
@@ -35,8 +34,7 @@ The metadata XML path runs a conservative formatter. It accepts formatted output
 only when structure and ordering signatures match the input and a second pass is
 idempotent. Otherwise it returns the original XML text with a trailing newline.
 For `CustomLabels`, optional sorting by `<fullName>` is controlled by
-`salesforceSortLabelsByFullName` (default `false`). The old
-`salesforceSortLabelEntriesByFullName` option remains as a legacy alias.
+`salesforceSortLabelsByFullName` (default `false`).
 
 ## Corpus Route Invariants
 
@@ -51,7 +49,7 @@ to pass-through normalization with one trailing newline. Unknown route checks
 stay active on the full corpus to surface unsupported families as they appear.
 
 Metadata family source-of-truth lives in `src/metadata-families.ts`. One directory-family
-pattern and one metadata extension set define which legacy suffix files route
+pattern and one metadata extension set define which metadata suffix files route
 to `metadata-xml` outside plain `.xml` handling. Added families include
 `permissionSetGroups`, `customPermissions`, `restrictionRules`, `scopingRules`,
 `samlSsoConfigs`, `corsWhitelistOrigins`, `sites`, `networks`,

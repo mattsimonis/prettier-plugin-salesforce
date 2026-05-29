@@ -11,10 +11,10 @@ The default formatter path must feel like ordinary Prettier.
 
 ## First Baseline
 
-Run this before adding formatter code:
+Run this before adding formatter code or before a large formatter change:
 
 ```sh
-pnpm bench ./corpus
+pnpm bench packages/prettier-plugin-salesforce/tests
 ```
 
 Record:
@@ -34,20 +34,27 @@ The first report is a measuring stick, not a pass/fail gate.
 
 ## Corpus Gate
 
-Run:
+Run against a representative Salesforce corpus:
 
 ```sh
-pnpm bench ./corpus --plugin
+pnpm bench /abs/path/to/corpus --plugin
 ```
 
-Release candidates must record warm run results here before publishing.
+Record warm run results here before publishing.
+
+The release gate uses `SF_PRETTIER_BENCH_ROOT` when set and falls back to
+`packages/prettier-plugin-salesforce/tests`:
+
+```sh
+SF_PRETTIER_BENCH_ROOT=/abs/path/to/corpus pnpm release:check
+```
 
 ## Report Field Notes
 
-The benchmark report now prints two tables.
+The benchmark report prints two tables.
 
-- Summary table (existing): one row per run with total timing and memory.
-- Family table (new): one row per file family (`apex`, `markup`, `xml`, `other`).
+- Summary table: one row per run with total timing and memory.
+- Family table: one row per file family (`apex`, `markup`, `xml`, `other`).
 
 Family definitions:
 
@@ -65,12 +72,12 @@ Interpretation notes:
 
 ## Safety Cost Notes
 
-- ApexDoc-aware Apex formatting is now part of the default path and must stay
-  within the same warm-file budget.
+- ApexDoc-aware Apex formatting is part of the default path and must stay within
+  the same warm-file budget.
 - Markup safety rules add dialect checks and guarded inline expansion; keep this
   in the save-on-format budget.
-- Metadata XML now runs structure-signature checks and a second-pass idempotence
+- Metadata XML runs structure-signature checks and a second-pass idempotence
   check; keep this in budget while preserving fallback correctness.
-- The fallback matrix now includes encoded plus CDATA edge mixes across
+- The fallback matrix includes encoded plus CDATA edge mixes across
   permissionset/profile/layout/flow/object/labels/translation families; keep
   those guard fixtures in the xml-focused test pass without widening runtime.

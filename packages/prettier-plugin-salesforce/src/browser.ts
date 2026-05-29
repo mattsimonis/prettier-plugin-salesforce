@@ -17,14 +17,9 @@ export const plugin: Plugin = {
       type: "boolean",
       category: "Salesforce",
       default: false,
-      description: "Sort <labels> entries in .labels metadata files by nested <fullName> value."
+      description:
+        "Sort <labels> entries in .labels metadata files by nested <fullName> value.",
     },
-    salesforceSortLabelEntriesByFullName: {
-      type: "boolean",
-      category: "Salesforce",
-      default: false,
-      description: "Deprecated alias for salesforceSortLabelsByFullName."
-    }
   },
   parsers: {
     "salesforce-apex": apexParser,
@@ -32,14 +27,14 @@ export const plugin: Plugin = {
     "salesforce-markup": salesforceMarkupParser,
     "salesforce-metadata-xml": metadataXmlParser,
     "salesforce-router": createParser("payload-text"),
-    "salesforce-router-by-path": createPathAwareParser("unknown")
+    "salesforce-router-by-path": createPathAwareParser("unknown"),
   },
   printers: {
     "salesforce-apex-cst": apexPrinter,
     "salesforce-markup": salesforceMarkupPrinter,
     "salesforce-metadata-xml": metadataXmlPrinter,
-    "salesforce-router": routerPrinter
-  }
+    "salesforce-router": routerPrinter,
+  },
 };
 
 export default plugin;
