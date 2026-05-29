@@ -20,10 +20,10 @@ describe("package surface contract", () => {
     });
   });
 
-  it("uses the Prettier doc subpath that works in Prettier 2 and 3", () => {
+  it("uses the Prettier doc subpath and named builders export", () => {
     const routerSource = readFileSync(path.join(PACKAGE_ROOT, "src", "printers", "router.ts"), "utf8");
 
-    expect(routerSource).toContain('from "prettier/doc.js"');
+    expect(routerSource).toContain('import { builders } from "prettier/doc.js"');
     expect(routerSource).not.toContain('from "prettier/doc"');
   });
 

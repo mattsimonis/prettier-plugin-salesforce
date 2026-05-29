@@ -149,6 +149,35 @@ describe("salesforce markup printer", () => {
     );
   });
 
+  it("normalizes wrapped Visualforce tag attribute indentation", async () => {
+    const source =
+      '<apex:commandButton action="{!Export}" value="Export"\n            onclick="return confirm(\'Are you sure you want to export the batch(es)?\');" />';
+    const formatted = await prettier.format(source, {
+      parser: "salesforce-markup",
+      tabWidth: 4,
+      plugins: [plugin]
+    });
+
+    expect(formatted).toBe(
+      '<apex:commandButton\n    action="{!Export}"\n    value="Export"\n    onclick="return confirm(\'Are you sure you want to export the batch(es)?\');"\n/>\n'
+    );
+  });
+
+  it("normalizes wrapped Aura html tag attribute indentation", async () => {
+    const source =
+      '<span id="{!result.Identifier}" class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"\n                    role="option" onclick="{!c.onResultClick}">';
+    const formatted = await prettier.format(source, {
+      parser: "salesforce-markup",
+      filepath: "/tmp/force-app/main/default/aura/SearchResults/SearchResults.cmp",
+      tabWidth: 4,
+      plugins: [plugin]
+    });
+
+    expect(formatted).toBe(
+      '<span\n    id="{!result.Identifier}"\n    class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"\n    role="option"\n    onclick="{!c.onResultClick}"\n>\n'
+    );
+  });
+
   it("preserves raw script text that contains comparison operators", async () => {
     const source = "<apex:page><script>if (a < b) { console.log(a); }</script></apex:page>";
     const formatted = await prettier.format(source, {

@@ -122,7 +122,23 @@ describe("salesforce markup parser", () => {
     expect(parsed.applySalesforceTransforms).toBe(true);
   });
 
-  it.each([".page", ".component", ".cmp", ".app", ".evt", ".design", ".auradoc"])(
+  it.each([
+    [".page", "visualforce"],
+    [".component", "visualforce"],
+    [".cmp", "aura"],
+    [".evt", "aura"],
+    [".design", "aura"],
+    [".auradoc", "aura"]
+  ] as const)("keeps transforms enabled for supported markup extension %s", (extension, dialect) => {
+    const parsed = salesforceMarkupParser.parse("<div>plain</div>", {
+      filepath: `/tmp/force-app/main/default/markup/sample${extension}`
+    } as never);
+
+    expect(parsed.dialect).toBe(dialect);
+    expect(parsed.applySalesforceTransforms).toBe(true);
+  });
+
+  it.each([".app"])(
     "keeps transforms enabled for supported markup extension %s",
     (extension) => {
       const parsed = salesforceMarkupParser.parse("<div>plain</div>", {

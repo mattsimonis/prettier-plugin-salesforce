@@ -1,12 +1,12 @@
 import type { Printer } from "prettier";
-import prettierDoc from "prettier/doc.js";
+import { builders } from "prettier/doc.js";
 import { detectSalesforceMarkupDialect } from "../markup/parser.js";
 import { formatSalesforceMarkup } from "../markup/printer.js";
 import { formatXmlConservative } from "../xml/printer.js";
 import { applyFinalNewlinePreference } from "../shared/final-newline.js";
 import type { SalesforceAst } from "../parsers/router.js";
 
-const { hardline } = prettierDoc.builders;
+const { hardline } = builders;
 
 export const routerPrinter: Printer<SalesforceAst> = {
   embed(path, options) {

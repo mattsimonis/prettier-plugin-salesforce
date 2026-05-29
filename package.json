@@ -10,8 +10,8 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
-    "playground:dev": "pnpm --filter @prettier-salesforce/playground dev",
-    "playground:build": "pnpm --filter @prettier-salesforce/playground build",
+    "playground:dev": "pnpm --filter prettier-plugin-salesforce build && pnpm --filter @prettier-salesforce/playground dev",
+    "playground:build": "pnpm --filter prettier-plugin-salesforce build && pnpm --filter @prettier-salesforce/playground build",
     "playground:preview": "pnpm --filter @prettier-salesforce/playground preview",
     "bench": "pnpm --filter @prettier-salesforce/benchmarks bench",
     "release:check": "node scripts/release-check.mjs"

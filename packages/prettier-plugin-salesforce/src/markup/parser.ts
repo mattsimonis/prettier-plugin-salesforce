@@ -163,6 +163,23 @@ function resolveDialect(source: string, filepath: string | null): SalesforceMark
     return detected;
   }
 
+  if (filepath) {
+    const normalized = filepath.toLowerCase();
+    if (normalized.endsWith(".page") || normalized.endsWith(".component")) {
+      return "visualforce";
+    }
+    if (
+      normalized.endsWith(".cmp") ||
+      normalized.endsWith(".evt") ||
+      normalized.endsWith(".design") ||
+      normalized.endsWith(".auradoc") ||
+      normalized.endsWith(".intf") ||
+      normalized.endsWith(".tokens")
+    ) {
+      return "aura";
+    }
+  }
+
   if (filepath && filepath.toLowerCase().endsWith(".html") && isLwcHtmlComponentPath(filepath)) {
     return "lwc";
   }

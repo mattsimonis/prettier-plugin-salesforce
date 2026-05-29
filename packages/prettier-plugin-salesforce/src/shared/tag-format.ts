@@ -23,7 +23,7 @@ export function formatTagLike(source: string, options: IndentOptions = {}): stri
       continue;
     }
 
-    const tag = token.value.trim();
+    const tag = normalizeTagWhitespace(token.value.trim());
     if (isClosingTag(tag)) {
       indent = Math.max(indent - 1, 0);
       lines.push(`${spaces(indent, indentText)}${tag}`);
@@ -106,6 +106,7 @@ function findTagEnd(source: string, start: number): number {
       inSingleQuote = !inSingleQuote;
       continue;
     }
+
     if (char === "\"" && !inSingleQuote) {
       inDoubleQuote = !inDoubleQuote;
       continue;
@@ -116,6 +117,62 @@ function findTagEnd(source: string, start: number): number {
   }
 
   return source.length - 1;
+}
+
+function normalizeTagWhitespace(tag: string): string {
+  if (!tag.includes("\n") && !tag.includes("\r") && !tag.includes("\t")) {
+    return tag;
+  }
+
+  let normalized = "";
+  let inSingleQuote = false;
+  let inDoubleQuote = false;
+  let braceDepth = 0;
+  let pendingWhitespace = false;
+
+  for (let index = 0; index < tag.length; index += 1) {
+    const char = tag[index];
+
+    if (pendingWhitespace && !isWhitespace(char)) {
+      if (normalized !== "" && !normalized.endsWith("<") && !normalized.endsWith("/") && char !== ">" && char !== "/") {
+        normalized += " ";
+      }
+      pendingWhitespace = false;
+    }
+
+    if (char === "'" && !inDoubleQuote) {
+      inSingleQuote = !inSingleQuote;
+      normalized += char;
+      continue;
+    }
+    if (char === "\"" && !inSingleQuote) {
+      inDoubleQuote = !inDoubleQuote;
+      normalized += char;
+      continue;
+    }
+
+    if (!inSingleQuote && !inDoubleQuote) {
+      if (char === "{") {
+        braceDepth += 1;
+        normalized += char;
+        continue;
+      }
+      if (char === "}") {
+        braceDepth = Math.max(braceDepth - 1, 0);
+        normalized += char;
+        continue;
+      }
+    }
+
+    if (!inSingleQuote && !inDoubleQuote && braceDepth === 0 && isWhitespace(char)) {
+      pendingWhitespace = true;
+      continue;
+    }
+
+    normalized += char;
+  }
+
+  return normalized;
 }
 
 function extractTagName(tag: string): string {
@@ -155,6 +212,10 @@ function findRawTextCloseTag(source: string, tagName: string, start: number): { 
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function isWhitespace(char: string): boolean {
+  return char === " " || char === "\t" || char === "\n" || char === "\r";
 }
 
 function spaces(indent: number, indentText: string): string {

@@ -192,76 +192,387 @@ System.debug('acct ' + a.Name);
   }
 ];
 
-const errorPane = document.querySelector("#errorPane");
-const filepathInput = document.querySelector("#filepathInput");
-const sampleSelect = document.querySelector("#sampleSelect");
-const printWidthInput = document.querySelector("#printWidthInput");
-const tabWidthInput = document.querySelector("#tabWidthInput");
-const trailingCommaSelect = document.querySelector("#trailingCommaSelect");
-const useTabsToggle = document.querySelector("#useTabsToggle");
-const singleQuoteToggle = document.querySelector("#singleQuoteToggle");
-const bracketSameLineToggle = document.querySelector("#bracketSameLineToggle");
-const sortLabelsToggle = document.querySelector("#sortLabelsToggle");
-const routeBadge = document.querySelector("#routeBadge");
-const statusBadge = document.querySelector("#statusBadge");
-const formatButton = document.querySelector("#formatButton");
-const clearButton = document.querySelector("#clearButton");
-const copyButton = document.querySelector("#copyButton");
-const resetConfigButton = document.querySelector("#resetConfigButton");
+const app = document.querySelector("#app");
+let errorPane;
+let filepathInput;
+let sampleSelect;
+let printWidthInput;
+let tabWidthInput;
+let trailingCommaSelect;
+let useTabsToggle;
+let singleQuoteToggle;
+let bracketSameLineToggle;
+let sortLabelsToggle;
+let routeBadge;
+let statusBadge;
+let inputEditor;
+let outputEditor;
+let configEditor;
 let formatRequestId = 0;
-const inputEditor = createEditor(document.querySelector("#inputEditor"), {
-  route: () => routeFile(filepathInput.value),
-  tabWidth: getConfiguredTabWidth,
-  onInput: () => {}
-});
-const outputEditor = createEditor(document.querySelector("#outputEditor"), {
-  readOnly: true,
-  route: () => routeFile(filepathInput.value),
-  tabWidth: getConfiguredTabWidth
-});
-const configEditor = createEditor(document.querySelector("#configEditor"), {
-  route: () => "prettier-core",
-  tabWidth: getConfiguredTabWidth,
-  onInput: () => {
-    syncEditorTabSize();
-    syncControlsFromConfig();
-    formatNow();
+
+mountRoute();
+window.addEventListener("popstate", mountRoute);
+document.addEventListener("click", (event) => {
+  const link = event.target.closest("[data-route]");
+  if (!link) {
+    return;
   }
+  event.preventDefault();
+  navigate(link.dataset.route);
 });
 
-renderSampleSelect();
-resetConfig();
-loadSample("Simple Class");
-updateRouteBadge();
+function mountRoute() {
+  if (isPlaygroundRoute()) {
+    mountPlayground();
+    return;
+  }
+  mountHome();
+}
 
-formatButton.addEventListener("click", formatNow);
-clearButton.addEventListener("click", clearInput);
-copyButton.addEventListener("click", copyOutput);
-filepathInput.addEventListener("input", () => {
-  updateRouteBadge();
-  inputEditor.render();
-  outputEditor.render();
-});
-sampleSelect.addEventListener("change", () => loadSample(sampleSelect.value));
-for (const control of [
-  printWidthInput,
-  tabWidthInput
-]) {
-  control.addEventListener("input", updateConfigFromControls);
+function isPlaygroundRoute() {
+  return window.location.pathname.replace(/\/$/, "").endsWith("/playground");
 }
-for (const control of [
-  trailingCommaSelect,
-  useTabsToggle,
-  singleQuoteToggle,
-  bracketSameLineToggle,
-  sortLabelsToggle
-]) {
-  control.addEventListener("change", updateConfigFromControls);
+
+function navigate(route) {
+  const nextPath = route === "playground" ? routePath("playground") : routePath("home");
+  window.history.pushState({}, "", nextPath);
+  mountRoute();
 }
-resetConfigButton.addEventListener("click", () => {
+
+function routePath(route) {
+  const basePath = window.location.pathname.replace(/\/playground\/?$/, "");
+  const normalizedBase = basePath.endsWith("/") ? basePath : `${basePath}/`;
+  return route === "playground" ? `${normalizedBase}playground` : normalizedBase;
+}
+
+function mountHome() {
+  document.title = "Prettier Plugin Salesforce";
+  app.innerHTML = homeTemplate();
+  for (const link of app.querySelectorAll('[data-route="playground"]')) {
+    link.setAttribute("href", routePath("playground"));
+  }
+}
+
+function mountPlayground() {
+  document.title = "Salesforce Formatting Playground";
+  app.innerHTML = playgroundTemplate();
+  const homeLink = app.querySelector('[data-route="home"]');
+  homeLink.setAttribute("href", routePath("home"));
+
+  errorPane = document.querySelector("#errorPane");
+  filepathInput = document.querySelector("#filepathInput");
+  sampleSelect = document.querySelector("#sampleSelect");
+  printWidthInput = document.querySelector("#printWidthInput");
+  tabWidthInput = document.querySelector("#tabWidthInput");
+  trailingCommaSelect = document.querySelector("#trailingCommaSelect");
+  useTabsToggle = document.querySelector("#useTabsToggle");
+  singleQuoteToggle = document.querySelector("#singleQuoteToggle");
+  bracketSameLineToggle = document.querySelector("#bracketSameLineToggle");
+  sortLabelsToggle = document.querySelector("#sortLabelsToggle");
+  routeBadge = document.querySelector("#routeBadge");
+  statusBadge = document.querySelector("#statusBadge");
+
+  const formatButton = document.querySelector("#formatButton");
+  const clearButton = document.querySelector("#clearButton");
+  const copyButton = document.querySelector("#copyButton");
+  const resetConfigButton = document.querySelector("#resetConfigButton");
+
+  inputEditor = createEditor(document.querySelector("#inputEditor"), {
+    route: () => routeFile(filepathInput.value),
+    tabWidth: getConfiguredTabWidth,
+    onInput: () => {}
+  });
+  outputEditor = createEditor(document.querySelector("#outputEditor"), {
+    readOnly: true,
+    route: () => routeFile(filepathInput.value),
+    tabWidth: getConfiguredTabWidth
+  });
+  configEditor = createEditor(document.querySelector("#configEditor"), {
+    route: () => "prettier-core",
+    tabWidth: getConfiguredTabWidth,
+    onInput: () => {
+      syncEditorTabSize();
+      syncControlsFromConfig();
+      formatNow();
+    }
+  });
+
+  renderSampleSelect();
   resetConfig();
-  formatNow();
-});
+  loadSample("Simple Class");
+  updateRouteBadge();
+
+  formatButton.addEventListener("click", formatNow);
+  clearButton.addEventListener("click", clearInput);
+  copyButton.addEventListener("click", copyOutput);
+  filepathInput.addEventListener("input", () => {
+    updateRouteBadge();
+    inputEditor.render();
+    outputEditor.render();
+  });
+  sampleSelect.addEventListener("change", () => loadSample(sampleSelect.value));
+  for (const control of [printWidthInput, tabWidthInput]) {
+    control.addEventListener("input", updateConfigFromControls);
+  }
+  for (const control of [
+    trailingCommaSelect,
+    useTabsToggle,
+    singleQuoteToggle,
+    bracketSameLineToggle,
+    sortLabelsToggle
+  ]) {
+    control.addEventListener("change", updateConfigFromControls);
+  }
+  resetConfigButton.addEventListener("click", () => {
+    resetConfig();
+    formatNow();
+  });
+}
+
+function homeTemplate() {
+  return `
+    <div class="site-shell">
+      <header class="site-header">
+        <a class="site-brand" href="#top" aria-label="Prettier Plugin Salesforce home">
+          <div class="prettier-mark" aria-hidden="true">
+            <span class="bg-[#ea5f6f]"></span>
+            <span class="bg-[#f7b93e]"></span>
+            <span class="bg-[#56b3b4]"></span>
+            <span class="bg-[#bf85bf]"></span>
+          </div>
+          <span>prettier-plugin-salesforce</span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="#usage">Usage</a>
+          <a href="#features">Features</a>
+          <a href="#options">Options</a>
+          <a href="#audit">Config audit</a>
+          <a data-route="playground" href="/playground">Playground</a>
+        </nav>
+      </header>
+
+      <main id="top">
+        <section class="hero-section">
+          <div class="hero-copy">
+            <p class="eyebrow">Prettier for Salesforce source</p>
+            <h1>Format Apex, Salesforce metadata, Visualforce, Aura, and LWC templates with one plugin.</h1>
+            <p class="hero-lede">
+              Keep Salesforce-owned files on Salesforce-aware parsers while Prettier core and other plugins keep ordinary project files in line.
+            </p>
+            <div class="hero-actions">
+              <a class="primary-button site-button" data-route="playground" href="/playground">Try the playground</a>
+              <a class="ghost-button site-button" href="#usage">Read setup</a>
+            </div>
+          </div>
+          <div class="hero-card" aria-label="Install command">
+            <div class="terminal-title">
+              <span></span><span></span><span></span>
+              <strong>install</strong>
+            </div>
+            <pre><code>pnpm add -D prettier prettier-plugin-salesforce</code></pre>
+            <div class="terminal-title">
+              <span></span><span></span><span></span>
+              <strong>.prettierrc</strong>
+            </div>
+            <pre><code>{
+  "plugins": ["prettier-plugin-salesforce"]
+}</code></pre>
+          </div>
+        </section>
+
+        <section id="usage" class="site-section">
+          <div class="section-heading">
+            <p class="eyebrow">Use it in a Salesforce project</p>
+            <h2>Install, add the plugin, and let file paths pick the parser.</h2>
+          </div>
+          <div class="step-grid">
+            <article class="info-card">
+              <span class="step-number">1</span>
+              <h3>Install beside Prettier</h3>
+              <pre><code>pnpm add -D prettier prettier-plugin-salesforce</code></pre>
+            </article>
+            <article class="info-card">
+              <span class="step-number">2</span>
+              <h3>Register the plugin</h3>
+              <pre><code>{
+  "plugins": ["prettier-plugin-salesforce"]
+}</code></pre>
+            </article>
+            <article class="info-card">
+              <span class="step-number">3</span>
+              <h3>Format or check your source</h3>
+              <pre><code>pnpm prettier --write "force-app/**/*"
+pnpm prettier --check "force-app/**/*"</code></pre>
+            </article>
+          </div>
+        </section>
+
+        <section id="features" class="site-section">
+          <div class="section-heading">
+            <p class="eyebrow">Features</p>
+            <h2>Salesforce routes get Salesforce handling. Everything else stays with Prettier.</h2>
+          </div>
+          <div class="feature-grid">
+            <article class="info-card"><h3>Apex formatting</h3><p>Formats classes, triggers, and anonymous Apex scripts.</p></article>
+            <article class="info-card"><h3>Metadata XML</h3><p>Handles <code>*-meta.xml</code>, labels, profiles, flows, permission sets, and known metadata suffix files.</p></article>
+            <article class="info-card"><h3>Markup support</h3><p>Formats Visualforce, Aura markup, and LWC templates by path.</p></article>
+            <article class="info-card"><h3>Path-aware routing</h3><p>Shared extensions such as <code>.html</code>, <code>.xml</code>, and <code>.app</code> route by Salesforce path rules.</p></article>
+            <article class="info-card"><h3>Core plugin delegation</h3><p>JS, TS, CSS, JSON, YAML, Markdown, and ordinary HTML can stay with Prettier core or other plugins.</p></article>
+            <article class="info-card"><h3>Browser-ready package</h3><p>The playground uses the browser export so formatting can run in the site.</p></article>
+          </div>
+        </section>
+
+        <section id="options" class="site-section">
+          <div class="section-heading">
+            <p class="eyebrow">Options</p>
+            <h2>Keep the defaults, then change only the Salesforce edges your team cares about.</h2>
+          </div>
+          <div class="option-table">
+            <div><strong>salesforceSortLabelsByFullName</strong><span>Sort CustomLabels blocks by nested fullName.</span></div>
+            <div><strong>salesforceFinalNewline</strong><span>Print one trailing newline for Salesforce-formatted files.</span></div>
+            <div><strong>salesforceTestVisiblePlacement</strong><span>Put Apex @TestVisible on its own line or keep it inline.</span></div>
+            <div><strong>salesforceBlankLineBeforeLineComment</strong><span>Add spacing before standalone Apex line comments.</span></div>
+            <div><strong>salesforceLogicalOperatorPosition</strong><span>Choose end-of-line or start-of-line wrapped Apex logical operators.</span></div>
+          </div>
+        </section>
+
+        <section id="audit" class="site-section cta-section">
+          <div>
+            <p class="eyebrow">Config audit</p>
+            <h2>Find risky Prettier parser overrides before they steal Salesforce files.</h2>
+            <p>Run the audit command against a workspace, print JSON for automation, or apply supported safe fixes.</p>
+          </div>
+          <pre><code>pnpm --filter prettier-plugin-salesforce audit:configs /abs/path/to/workspace
+pnpm --filter prettier-plugin-salesforce audit:configs --apply-fixes /abs/path/to/workspace</code></pre>
+        </section>
+      </main>
+    </div>
+  `;
+}
+
+function playgroundTemplate() {
+  return `
+    <div class="min-h-screen overflow-hidden">
+      <header class="border-b border-white/10 bg-[#0d1224]/95 backdrop-blur">
+        <div class="mx-auto flex max-w-[1600px] items-center justify-between gap-5 px-4 py-2.5 sm:px-5">
+          <div class="flex min-w-0 items-center gap-3 sm:gap-4">
+            <a data-route="home" href="/" class="prettier-mark" aria-label="Back to docs home">
+              <span class="bg-[#ea5f6f]"></span>
+              <span class="bg-[#f7b93e]"></span>
+              <span class="bg-[#56b3b4]"></span>
+              <span class="bg-[#bf85bf]"></span>
+            </a>
+            <div class="min-w-0">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">prettier-plugin-salesforce</p>
+              <h1 class="text-lg font-semibold leading-tight text-white">Salesforce formatting playground</h1>
+            </div>
+          </div>
+          <div class="hidden items-center gap-2 md:flex">
+            <span id="statusBadge" class="status-pill">Ready</span>
+            <span id="routeBadge" class="status-pill font-mono">route: apex</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="mx-auto flex min-h-[calc(100vh-73px)] max-w-[1600px] flex-col gap-3 px-4 py-3 sm:px-5">
+        <section class="workspace min-h-0">
+          <div class="control-rail">
+            <label class="min-w-0 flex-1">
+              <span class="control-label">Example</span>
+              <select id="sampleSelect" class="control-input"></select>
+            </label>
+            <input id="filepathInput" type="hidden" value="force-app/main/default/classes/Example.cls" />
+            <button id="formatButton" class="primary-button" type="button">Format</button>
+          </div>
+
+          <details class="tool-drawer">
+            <summary>Config options</summary>
+            <div class="drawer-grid">
+              <section class="drawer-section">
+                <h2 class="drawer-heading">Options</h2>
+                <div class="config-control-grid">
+                  <label>
+                    <span class="control-label">Print width</span>
+                    <input id="printWidthInput" class="control-input" type="number" min="20" max="240" step="1" />
+                  </label>
+                  <label>
+                    <span class="control-label">Tab width</span>
+                    <input id="tabWidthInput" class="control-input" type="number" min="1" max="12" step="1" />
+                  </label>
+                  <label>
+                    <span class="control-label">Trailing comma</span>
+                    <select id="trailingCommaSelect" class="control-input">
+                      <option value="none">none</option>
+                      <option value="es5">es5</option>
+                      <option value="all">all</option>
+                    </select>
+                  </label>
+                  <label class="toggle-pill config-toggle">
+                    <input id="useTabsToggle" type="checkbox" />
+                    <span>Use tabs</span>
+                  </label>
+                  <label class="toggle-pill config-toggle">
+                    <input id="singleQuoteToggle" type="checkbox" />
+                    <span>Single quotes</span>
+                  </label>
+                  <label class="toggle-pill config-toggle">
+                    <input id="bracketSameLineToggle" type="checkbox" />
+                    <span>Bracket same line</span>
+                  </label>
+                  <label class="toggle-pill config-toggle config-toggle-wide">
+                    <input id="sortLabelsToggle" type="checkbox" />
+                    <span>Sort labels by fullName</span>
+                  </label>
+                </div>
+              </section>
+
+              <section class="drawer-section drawer-section-wide">
+                <div class="drawer-heading-row">
+                  <h2 class="drawer-heading">Config JSON</h2>
+                  <button id="resetConfigButton" class="ghost-button" type="button">Reset</button>
+                </div>
+                <div class="config-grid">
+                  <label>
+                    <span class="control-label">Options merged into Prettier</span>
+                    <div id="configEditor" class="editor-shell editor-shell-small" data-editor="config"></div>
+                  </label>
+                  <div class="config-help">
+                    <p>Parsed as JSON and passed into <code>prettier.format</code>. The sample path controls parser routing; runtime keys like <code>parser</code>, <code>filepath</code>, and <code>plugins</code> stay under playground control.</p>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </details>
+
+          <div class="pane-grid min-h-0">
+            <section class="code-panel">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-kicker">Source</p>
+                  <h2>Input</h2>
+                </div>
+                <button id="clearButton" class="ghost-button" type="button">Clear</button>
+              </div>
+              <div id="inputEditor" class="editor-shell" data-editor="input"></div>
+            </section>
+            <section class="code-panel">
+              <div class="panel-header">
+                <div>
+                  <p class="panel-kicker">Formatted</p>
+                  <h2>Output</h2>
+                </div>
+                <button id="copyButton" class="ghost-button" type="button">Copy</button>
+              </div>
+              <div id="outputEditor" class="editor-shell" data-editor="output"></div>
+            </section>
+          </div>
+
+          <pre id="errorPane" class="error-pane" aria-live="polite"></pre>
+        </section>
+      </main>
+    </div>
+  `;
+}
 
 async function formatNow() {
   const requestId = ++formatRequestId;
