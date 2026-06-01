@@ -46,8 +46,9 @@ The repository Pages source should be:
 The Pages workflow also lives at
 [`.github/workflows/playground-pages.yml`](../.github/workflows/playground-pages.yml).
 It builds `packages/playground/dist` with `pnpm playground:build` and deploys
-that folder with the GitHub Pages Actions deployer. Use it after GitHub Actions
-can start jobs for the account.
+that folder with the GitHub Pages Actions deployer. It should stay disabled
+while GitHub Actions jobs cannot start for the account. Enable it after Actions
+can run again.
 
 To switch from branch deploys to the workflow, set Pages to deploy from GitHub
 Actions in the repository settings. Then push `main` or run the workflow by hand
