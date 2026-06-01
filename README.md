@@ -2,6 +2,8 @@
 
 Prettier plugin for Salesforce source files.
 
+Site: https://mattsimonis.github.io/prettier-plugin-salesforce/
+
 It formats Salesforce-owned files and leaves ordinary project files to Prettier
 core or other plugins.
 
@@ -204,6 +206,7 @@ pnpm playground:preview
 
 The build output goes to `packages/playground/dist`. The GitHub Pages workflow
 is [`.github/workflows/playground-pages.yml`](.github/workflows/playground-pages.yml).
+Publishing steps are in [docs/publishing.md](docs/publishing.md).
 
 ## Corpus and benchmarks
 
@@ -233,4 +236,5 @@ See [docs/performance-budget.md](docs/performance-budget.md) and
 - [docs/file-routing.md](docs/file-routing.md): route table, parser boundaries, and shared extension behavior.
 - [docs/performance-budget.md](docs/performance-budget.md): timing targets and benchmark report fields.
 - [docs/release-gate.md](docs/release-gate.md): commands required before the first publish.
+- [docs/publishing.md](docs/publishing.md): GitHub Pages, repository, and npm publish steps.
 - [docs/native-fallback.md](docs/native-fallback.md): non-default fallback worker protocol notes.

@@ -1,6 +1,6 @@
 {
   "name": "prettier-plugin-salesforce",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Prettier plugin for Salesforce Apex, metadata XML, Visualforce, Aura, and LWC template files.",
   "license": "MIT",
   "type": "module",
@@ -45,13 +45,13 @@
     "apex",
     "sfdx"
   ],
-  "homepage": "https://github.com/prettier-plugin-salesforce/prettier-plugin-salesforce#readme",
+  "homepage": "https://mattsimonis.github.io/prettier-plugin-salesforce/",
   "bugs": {
-    "url": "https://github.com/prettier-plugin-salesforce/prettier-plugin-salesforce/issues"
+    "url": "https://github.com/mattsimonis/prettier-plugin-salesforce/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/prettier-plugin-salesforce/prettier-plugin-salesforce.git"
+    "url": "git+https://github.com/mattsimonis/prettier-plugin-salesforce.git"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   applySortLabelsToggle,
+  defaultPlaygroundConfig,
   normalizePlaygroundConfigOptions,
   omitRuntimeOptions,
   readBoundedInteger,
@@ -8,6 +9,22 @@ import {
 } from "./config-options.js";
 
 describe("playground config options", () => {
+  it("defaults every playground option shown in the config UI", () => {
+    expect(defaultPlaygroundConfig).toEqual({
+      printWidth: 100,
+      tabWidth: 4,
+      useTabs: false,
+      singleQuote: false,
+      bracketSameLine: false,
+      trailingComma: "none",
+      salesforceSortLabelsByFullName: false,
+      salesforceFinalNewline: true,
+      salesforceTestVisiblePlacement: "own-line",
+      salesforceBlankLineBeforeLineComment: false,
+      salesforceLogicalOperatorPosition: "end-of-line"
+    });
+  });
+
   it("lets the sort-labels checkbox turn sorting off when JSON was true", () => {
     const config = {
       printWidth: 100,
@@ -88,6 +105,37 @@ describe("playground config options", () => {
     ).toEqual({
       printWidth: 100,
       tabWidth: 2
+    });
+  });
+
+  it("normalizes boolean and choice options to known playground defaults", () => {
+    expect(
+      normalizePlaygroundConfigOptions(
+        {
+          useTabs: "yes",
+          singleQuote: true,
+          bracketSameLine: 1,
+          trailingComma: "sideways",
+          salesforceSortLabelsByFullName: "true",
+          salesforceFinalNewline: false,
+          salesforceTestVisiblePlacement: "beside",
+          salesforceBlankLineBeforeLineComment: null,
+          salesforceLogicalOperatorPosition: "start-of-line"
+        },
+        defaultPlaygroundConfig
+      )
+    ).toEqual({
+      useTabs: false,
+      singleQuote: true,
+      bracketSameLine: false,
+      trailingComma: "none",
+      salesforceSortLabelsByFullName: false,
+      salesforceFinalNewline: false,
+      salesforceTestVisiblePlacement: "own-line",
+      salesforceBlankLineBeforeLineComment: false,
+      salesforceLogicalOperatorPosition: "start-of-line",
+      printWidth: 100,
+      tabWidth: 4
     });
   });
 });

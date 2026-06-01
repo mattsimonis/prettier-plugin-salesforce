@@ -401,6 +401,24 @@ describe("salesforce markup printer", () => {
     expect(second).toBe(first);
   });
 
+  it("keeps multiline aura self-closing expression tags idempotent", async () => {
+    const source = `<aura:component>
+  <aura:handler event="znu:PaymentScheduled" action="{!c.handlePaymentScheduled}" />
+</aura:component>`;
+    const first = await prettier.format(source, {
+      parser: "salesforce-markup",
+      plugins: [plugin]
+    });
+    const second = await prettier.format(first, {
+      parser: "salesforce-markup",
+      plugins: [plugin]
+    });
+
+    expect(first).toContain("<aura:handler");
+    expect(first).toContain("\n    event=");
+    expect(second).toBe(first);
+  });
+
   it("keeps mixed self-closing and inline expression tags stable in visualforce", async () => {
     const source =
       '<apex:page><apex:outputPanel rendered="{!showPanel}"><apex:outputField value="{!Account.Name}"/><apex:outputText>{!Account.Owner.Name}</apex:outputText><apex:outputField value="{!Account.Number}"/></apex:outputPanel></apex:page>';

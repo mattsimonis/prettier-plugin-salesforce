@@ -6,6 +6,16 @@
 }
 
 @layer components {
+  html,
+  body,
+  #app {
+    height: 100%;
+  }
+
+  body.playground-page {
+    overflow: hidden;
+  }
+
   .prettier-mark {
     @apply grid h-10 w-10 shrink-0 grid-cols-2 gap-1 rounded-lg bg-[#1b2559] p-2 shadow-lg shadow-black/30 ring-1 ring-white/10;
   }
@@ -173,6 +183,18 @@
     @apply rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300 shadow-sm;
   }
 
+  .playground-shell {
+    @apply flex h-screen min-h-[620px] flex-col overflow-hidden bg-[#080b16] text-slate-100;
+  }
+
+  .playground-header {
+    @apply flex-none border-b border-white/10 bg-[#0d1224]/95 backdrop-blur;
+  }
+
+  .playground-main {
+    @apply mx-auto flex min-h-0 w-full max-w-[1600px] flex-1 flex-col gap-3 px-4 py-3 sm:px-5;
+  }
+
   .workspace,
   .code-panel,
   .tool-drawer {
@@ -180,11 +202,19 @@
   }
 
   .workspace {
-    @apply flex min-h-[calc(100vh-80px)] flex-col gap-2.5 p-2.5;
+    @apply flex min-h-0 flex-1 flex-col gap-2.5 overflow-hidden p-2.5;
   }
 
   .control-rail {
-    @apply flex min-w-0 flex-col gap-2 rounded-lg border border-white/10 bg-[#0b1020] p-2 sm:flex-row sm:items-end;
+    @apply flex min-w-0 flex-none flex-col gap-2 rounded-lg border border-white/10 bg-[#0b1020] p-2 sm:flex-row sm:items-start;
+  }
+
+  .sample-picker {
+    @apply grid min-w-0 flex-1 gap-1;
+  }
+
+  .sample-meta {
+    @apply truncate px-1 font-mono text-[11px] text-slate-500;
   }
 
   .control-label {
@@ -214,6 +244,10 @@
     @apply h-10 rounded-lg bg-[#f7b93e] px-6 text-sm font-bold text-[#17120a] shadow-lg shadow-[#f7b93e]/10 transition hover:bg-[#ffd06e] focus:outline-none focus:ring-4 focus:ring-[#f7b93e]/25;
   }
 
+  #formatButton {
+    @apply sm:mt-5;
+  }
+
   .ghost-button {
     @apply rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-white/20 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-[#56b3b4]/15;
   }
@@ -235,23 +269,40 @@
   }
 
   .config-toggle-wide {
-    @apply md:col-span-2;
+    @apply col-span-2;
   }
 
   .tool-drawer {
-    @apply overflow-hidden p-0;
+    @apply relative z-20 flex-none overflow-visible p-0;
   }
 
   .tool-drawer summary {
-    @apply flex h-9 cursor-pointer select-none items-center px-3 text-sm font-semibold text-slate-200 outline-none;
+    @apply flex h-9 cursor-pointer select-none items-center justify-between gap-3 px-3 text-sm font-semibold text-slate-200 outline-none;
+  }
+
+  .summary-note {
+    @apply hidden truncate text-xs font-medium text-slate-500 sm:inline;
   }
 
   .tool-drawer[open] summary {
     @apply border-b border-white/10;
   }
 
+  .tool-drawer[open] .drawer-grid {
+    position: absolute;
+    inset-inline: -1px;
+    top: calc(100% + 0.25rem);
+    z-index: 30;
+    max-height: min(68vh, 36rem);
+    overflow: auto;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    background: #111827;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+  }
+
   .drawer-grid {
-    @apply grid gap-2 p-2 lg:grid-cols-[0.75fr_1.25fr];
+    @apply grid gap-2 p-2 lg:grid-cols-[0.9fr_1fr_1.25fr];
   }
 
   .drawer-section {
@@ -275,7 +326,7 @@
   }
 
   .config-control-grid {
-    @apply grid gap-2 md:grid-cols-2;
+    @apply grid grid-cols-2 gap-2;
   }
 
   .config-help {
@@ -287,11 +338,11 @@
   }
 
   .pane-grid {
-    @apply grid min-w-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-2;
+    @apply grid min-w-0 flex-1 grid-cols-1 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] gap-3 lg:grid-cols-2 lg:grid-rows-1;
   }
 
   .code-panel {
-    @apply flex min-h-[calc(100vh-235px)] flex-col overflow-hidden;
+    @apply flex min-h-0 flex-col overflow-hidden;
   }
 
   .panel-header {

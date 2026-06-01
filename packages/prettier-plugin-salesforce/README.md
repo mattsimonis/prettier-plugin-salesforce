@@ -3,6 +3,8 @@
 Prettier plugin for Salesforce Apex, Visualforce, Aura, LWC templates, and
 Salesforce metadata XML.
 
+Site and playground: https://mattsimonis.github.io/prettier-plugin-salesforce/
+
 ## Install
 
 ```bash

@@ -6,21 +6,16 @@ import salesforcePlugin, { routeFile } from "prettier-plugin-salesforce/browser"
 import {
   applySortLabelsToggle,
   configNumberBounds,
+  defaultPlaygroundConfig,
   normalizePlaygroundConfigOptions,
+  readChoice,
   readBoundedInteger,
   readSortLabelsToggle
 } from "./config-options.js";
 import { highlightSource } from "./highlight.js";
+import { extraSamples } from "./samples.js";
 
-const defaultConfig = {
-  printWidth: 100,
-  tabWidth: 2,
-  useTabs: false,
-  singleQuote: false,
-  bracketSameLine: false,
-  trailingComma: "none",
-  salesforceSortLabelsByFullName: false
-};
+const defaultConfig = defaultPlaygroundConfig;
 
 const samples = [
   {
@@ -136,7 +131,7 @@ System.debug('acct ' + a.Name);
   {
     group: "Metadata",
     label: "Permission Set",
-    complexity: "complex",
+    complexity: "large",
     filepath: "force-app/main/default/permissionsets/Billing.permissionset-meta.xml",
     text: `<?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
@@ -149,7 +144,7 @@ System.debug('acct ' + a.Name);
   {
     group: "Metadata",
     label: "Flow",
-    complexity: "complex",
+    complexity: "large",
     filepath: "force-app/main/default/flows/Invoice_Status.flow-meta.xml",
     text: `<?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
@@ -165,7 +160,7 @@ System.debug('acct ' + a.Name);
   {
     group: "Metadata",
     label: "Object Translation",
-    complexity: "complex",
+    complexity: "large",
     filepath: "force-app/main/default/objectTranslations/Invoice__c-en_US.objectTranslation-meta.xml",
     text: `<?xml version="1.0" encoding="UTF-8"?>
 <CustomObjectTranslation xmlns="http://soap.sforce.com/2006/04/metadata">
@@ -179,7 +174,7 @@ System.debug('acct ' + a.Name);
   {
     group: "Metadata",
     label: "Profile",
-    complexity: "complex",
+    complexity: "large",
     filepath: "force-app/main/default/profiles/Standard.profile-meta.xml",
     text: `<?xml version="1.0" encoding="UTF-8"?>
 <Profile xmlns="http://soap.sforce.com/2006/04/metadata">
@@ -189,13 +184,15 @@ System.debug('acct ' + a.Name);
 <objectPermissions><allowCreate>true</allowCreate><allowDelete>false</allowDelete><allowEdit>true</allowEdit><allowRead>true</allowRead><modifyAllRecords>false</modifyAllRecords><object>Invoice__c</object><viewAllRecords>false</viewAllRecords></objectPermissions>
 <userPermissions><enabled>true</enabled><name>ViewSetup</name></userPermissions>
 </Profile>`
-  }
+  },
+  ...extraSamples
 ];
 
 const app = document.querySelector("#app");
 let errorPane;
 let filepathInput;
 let sampleSelect;
+let sampleMeta;
 let printWidthInput;
 let tabWidthInput;
 let trailingCommaSelect;
@@ -203,6 +200,10 @@ let useTabsToggle;
 let singleQuoteToggle;
 let bracketSameLineToggle;
 let sortLabelsToggle;
+let finalNewlineToggle;
+let testVisiblePlacementSelect;
+let blankLineBeforeCommentToggle;
+let logicalOperatorPositionSelect;
 let routeBadge;
 let statusBadge;
 let inputEditor;
@@ -211,7 +212,7 @@ let configEditor;
 let formatRequestId = 0;
 
 mountRoute();
-window.addEventListener("popstate", mountRoute);
+window.addEventListener("hashchange", mountRoute);
 document.addEventListener("click", (event) => {
   const link = event.target.closest("[data-route]");
   if (!link) {
@@ -230,38 +231,38 @@ function mountRoute() {
 }
 
 function isPlaygroundRoute() {
-  return window.location.pathname.replace(/\/$/, "").endsWith("/playground");
+  return window.location.hash === "#playground";
 }
 
 function navigate(route) {
-  const nextPath = route === "playground" ? routePath("playground") : routePath("home");
-  window.history.pushState({}, "", nextPath);
+  window.location.hash = routeHash(route);
   mountRoute();
 }
 
-function routePath(route) {
-  const basePath = window.location.pathname.replace(/\/playground\/?$/, "");
-  const normalizedBase = basePath.endsWith("/") ? basePath : `${basePath}/`;
-  return route === "playground" ? `${normalizedBase}playground` : normalizedBase;
+function routeHash(route) {
+  return route === "playground" ? "#playground" : "#top";
 }
 
 function mountHome() {
   document.title = "Prettier Plugin Salesforce";
+  document.body.classList.remove("playground-page");
   app.innerHTML = homeTemplate();
   for (const link of app.querySelectorAll('[data-route="playground"]')) {
-    link.setAttribute("href", routePath("playground"));
+    link.setAttribute("href", routeHash("playground"));
   }
 }
 
 function mountPlayground() {
   document.title = "Salesforce Formatting Playground";
+  document.body.classList.add("playground-page");
   app.innerHTML = playgroundTemplate();
   const homeLink = app.querySelector('[data-route="home"]');
-  homeLink.setAttribute("href", routePath("home"));
+  homeLink.setAttribute("href", routeHash("home"));
 
   errorPane = document.querySelector("#errorPane");
   filepathInput = document.querySelector("#filepathInput");
   sampleSelect = document.querySelector("#sampleSelect");
+  sampleMeta = document.querySelector("#sampleMeta");
   printWidthInput = document.querySelector("#printWidthInput");
   tabWidthInput = document.querySelector("#tabWidthInput");
   trailingCommaSelect = document.querySelector("#trailingCommaSelect");
@@ -269,6 +270,10 @@ function mountPlayground() {
   singleQuoteToggle = document.querySelector("#singleQuoteToggle");
   bracketSameLineToggle = document.querySelector("#bracketSameLineToggle");
   sortLabelsToggle = document.querySelector("#sortLabelsToggle");
+  finalNewlineToggle = document.querySelector("#finalNewlineToggle");
+  testVisiblePlacementSelect = document.querySelector("#testVisiblePlacementSelect");
+  blankLineBeforeCommentToggle = document.querySelector("#blankLineBeforeCommentToggle");
+  logicalOperatorPositionSelect = document.querySelector("#logicalOperatorPositionSelect");
   routeBadge = document.querySelector("#routeBadge");
   statusBadge = document.querySelector("#statusBadge");
 
@@ -319,7 +324,11 @@ function mountPlayground() {
     useTabsToggle,
     singleQuoteToggle,
     bracketSameLineToggle,
-    sortLabelsToggle
+    sortLabelsToggle,
+    finalNewlineToggle,
+    testVisiblePlacementSelect,
+    blankLineBeforeCommentToggle,
+    logicalOperatorPositionSelect
   ]) {
     control.addEventListener("change", updateConfigFromControls);
   }
@@ -347,7 +356,7 @@ function homeTemplate() {
           <a href="#features">Features</a>
           <a href="#options">Options</a>
           <a href="#audit">Config audit</a>
-          <a data-route="playground" href="/playground">Playground</a>
+          <a data-route="playground" href="#playground">Playground</a>
         </nav>
       </header>
 
@@ -360,7 +369,7 @@ function homeTemplate() {
               Keep Salesforce-owned files on Salesforce-aware parsers while Prettier core and other plugins keep ordinary project files in line.
             </p>
             <div class="hero-actions">
-              <a class="primary-button site-button" data-route="playground" href="/playground">Try the playground</a>
+              <a class="primary-button site-button" data-route="playground" href="#playground">Try the playground</a>
               <a class="ghost-button site-button" href="#usage">Read setup</a>
             </div>
           </div>
@@ -452,8 +461,8 @@ pnpm --filter prettier-plugin-salesforce audit:configs --apply-fixes /abs/path/t
 
 function playgroundTemplate() {
   return `
-    <div class="min-h-screen overflow-hidden">
-      <header class="border-b border-white/10 bg-[#0d1224]/95 backdrop-blur">
+    <div class="playground-shell">
+      <header class="playground-header">
         <div class="mx-auto flex max-w-[1600px] items-center justify-between gap-5 px-4 py-2.5 sm:px-5">
           <div class="flex min-w-0 items-center gap-3 sm:gap-4">
             <a data-route="home" href="/" class="prettier-mark" aria-label="Back to docs home">
@@ -474,22 +483,28 @@ function playgroundTemplate() {
         </div>
       </header>
 
-      <main class="mx-auto flex min-h-[calc(100vh-73px)] max-w-[1600px] flex-col gap-3 px-4 py-3 sm:px-5">
+      <main class="playground-main">
         <section class="workspace min-h-0">
           <div class="control-rail">
-            <label class="min-w-0 flex-1">
-              <span class="control-label">Example</span>
-              <select id="sampleSelect" class="control-input"></select>
-            </label>
+            <div class="sample-picker">
+              <label class="min-w-0 flex-1">
+                <span class="control-label">Example</span>
+                <select id="sampleSelect" class="control-input"></select>
+              </label>
+              <p id="sampleMeta" class="sample-meta"></p>
+            </div>
             <input id="filepathInput" type="hidden" value="force-app/main/default/classes/Example.cls" />
             <button id="formatButton" class="primary-button" type="button">Format</button>
           </div>
 
           <details class="tool-drawer">
-            <summary>Config options</summary>
+            <summary>
+              <span>Config</span>
+              <span class="summary-note">Prettier and Salesforce options</span>
+            </summary>
             <div class="drawer-grid">
               <section class="drawer-section">
-                <h2 class="drawer-heading">Options</h2>
+                <h2 class="drawer-heading">Prettier</h2>
                 <div class="config-control-grid">
                   <label>
                     <span class="control-label">Print width</span>
@@ -519,9 +534,37 @@ function playgroundTemplate() {
                     <input id="bracketSameLineToggle" type="checkbox" />
                     <span>Bracket same line</span>
                   </label>
+                </div>
+              </section>
+
+              <section class="drawer-section">
+                <h2 class="drawer-heading">Salesforce</h2>
+                <div class="config-control-grid">
                   <label class="toggle-pill config-toggle config-toggle-wide">
                     <input id="sortLabelsToggle" type="checkbox" />
                     <span>Sort labels by fullName</span>
+                  </label>
+                  <label class="toggle-pill config-toggle">
+                    <input id="finalNewlineToggle" type="checkbox" />
+                    <span>Final newline</span>
+                  </label>
+                  <label class="toggle-pill config-toggle">
+                    <input id="blankLineBeforeCommentToggle" type="checkbox" />
+                    <span>Blank before // comments</span>
+                  </label>
+                  <label>
+                    <span class="control-label">TestVisible placement</span>
+                    <select id="testVisiblePlacementSelect" class="control-input">
+                      <option value="own-line">own-line</option>
+                      <option value="inline">inline</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span class="control-label">Logical operators</span>
+                    <select id="logicalOperatorPositionSelect" class="control-input">
+                      <option value="end-of-line">end-of-line</option>
+                      <option value="start-of-line">start-of-line</option>
+                    </select>
                   </label>
                 </div>
               </section>
@@ -653,6 +696,7 @@ function loadSample(label) {
   inputEditor.value = sample.text;
   filepathInput.value = sample.filepath;
   sampleSelect.value = sample.label;
+  updateSampleMeta(sample);
   inputEditor.render();
   updateRouteBadge();
   formatNow();
@@ -672,6 +716,10 @@ function syncControlsFromConfig() {
     singleQuoteToggle.checked = configOptions.singleQuote === true;
     bracketSameLineToggle.checked = configOptions.bracketSameLine === true;
     sortLabelsToggle.checked = readSortLabelsToggle(configOptions);
+    finalNewlineToggle.checked = configOptions.salesforceFinalNewline !== false;
+    testVisiblePlacementSelect.value = readTestVisiblePlacement(configOptions.salesforceTestVisiblePlacement);
+    blankLineBeforeCommentToggle.checked = configOptions.salesforceBlankLineBeforeLineComment === true;
+    logicalOperatorPositionSelect.value = readLogicalOperatorPosition(configOptions.salesforceLogicalOperatorPosition);
   } catch {
     return;
   }
@@ -687,7 +735,11 @@ function updateConfigFromControls() {
         useTabs: useTabsToggle.checked,
         singleQuote: singleQuoteToggle.checked,
         bracketSameLine: bracketSameLineToggle.checked,
-        trailingComma: readTrailingComma(trailingCommaSelect.value)
+        trailingComma: readTrailingComma(trailingCommaSelect.value),
+        salesforceFinalNewline: finalNewlineToggle.checked,
+        salesforceTestVisiblePlacement: readTestVisiblePlacement(testVisiblePlacementSelect.value),
+        salesforceBlankLineBeforeLineComment: blankLineBeforeCommentToggle.checked,
+        salesforceLogicalOperatorPosition: readLogicalOperatorPosition(logicalOperatorPositionSelect.value)
       },
       sortLabelsToggle.checked
     );
@@ -701,7 +753,15 @@ function updateConfigFromControls() {
 }
 
 function readTrailingComma(value) {
-  return ["none", "es5", "all"].includes(value) ? value : defaultConfig.trailingComma;
+  return readChoice(value, defaultConfig.trailingComma, ["none", "es5", "all"]);
+}
+
+function readTestVisiblePlacement(value) {
+  return readChoice(value, defaultConfig.salesforceTestVisiblePlacement, ["own-line", "inline"]);
+}
+
+function readLogicalOperatorPosition(value) {
+  return readChoice(value, defaultConfig.salesforceLogicalOperatorPosition, ["end-of-line", "start-of-line"]);
 }
 
 function updateRouteBadge() {
@@ -732,12 +792,26 @@ async function copyOutput() {
 
 function renderSampleSelect() {
   sampleSelect.textContent = "";
+  const groups = new Map();
   for (const sample of samples) {
+    if (!groups.has(sample.group)) {
+      const group = document.createElement("optgroup");
+      group.label = sample.group;
+      groups.set(sample.group, group);
+      sampleSelect.append(group);
+    }
     const option = document.createElement("option");
     option.value = sample.label;
-    option.textContent = `${sample.group} / ${sample.label}`;
-    sampleSelect.append(option);
+    option.textContent = `${sample.label} (${sample.complexity})`;
+    groups.get(sample.group).append(option);
   }
+}
+
+function updateSampleMeta(sample) {
+  if (!sampleMeta) {
+    return;
+  }
+  sampleMeta.textContent = `${sample.group} / ${sample.complexity} / ${sample.filepath}`;
 }
 
 function createEditor(root, options) {

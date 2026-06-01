@@ -23,7 +23,7 @@ describe("package surface contract", () => {
   it("uses the Prettier doc subpath and named builders export", () => {
     const routerSource = readFileSync(path.join(PACKAGE_ROOT, "src", "printers", "router.ts"), "utf8");
 
-    expect(routerSource).toContain('import { builders } from "prettier/doc.js"');
+    expect(routerSource).toContain('import prettierDoc from "prettier/doc.js"');
     expect(routerSource).not.toContain('from "prettier/doc"');
   });
 
@@ -40,6 +40,7 @@ describe("package surface contract", () => {
   it("publishes package docs and license text with release metadata", () => {
     const manifest = readPackageJson();
 
+    expect(manifest.version).not.toBe("0.0.0");
     expect(manifest.files).toEqual(expect.arrayContaining(["dist", "README.md", "LICENSE"]));
     expect(manifest.license).toBeTruthy();
     expect(manifest.repository).toBeTruthy();
@@ -72,6 +73,7 @@ function readPackageJson(): {
   repository?: unknown;
   homepage?: string;
   bugs?: unknown;
+  version?: string;
 } {
   return JSON.parse(readFileSync(path.join(PACKAGE_ROOT, "package.json"), "utf8")) as {
     exports?: unknown;
@@ -81,5 +83,6 @@ function readPackageJson(): {
     repository?: unknown;
     homepage?: string;
     bugs?: unknown;
+    version?: string;
   };
 }

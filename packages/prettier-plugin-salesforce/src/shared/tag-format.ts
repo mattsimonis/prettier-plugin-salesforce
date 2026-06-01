@@ -134,7 +134,7 @@ function normalizeTagWhitespace(tag: string): string {
     const char = tag[index];
 
     if (pendingWhitespace && !isWhitespace(char)) {
-      if (normalized !== "" && !normalized.endsWith("<") && !normalized.endsWith("/") && char !== ">" && char !== "/") {
+      if (normalized !== "" && !normalized.endsWith("<") && !normalized.endsWith("/") && char !== ">") {
         normalized += " ";
       }
       pendingWhitespace = false;
