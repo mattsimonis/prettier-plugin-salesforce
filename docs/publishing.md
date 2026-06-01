@@ -27,13 +27,31 @@ git push -u origin main
 
 ## GitHub Pages
 
-The Pages workflow lives at
+The live Pages site is served from the `gh-pages` branch:
+
+```sh
+pnpm playground:build
+git -C packages/playground/dist init
+git -C packages/playground/dist add .
+git -C packages/playground/dist commit -m "Deploy playground"
+git -C packages/playground/dist push --force origin HEAD:gh-pages
+rm -rf packages/playground/dist/.git
+```
+
+The repository Pages source should be:
+
+- branch: `gh-pages`
+- folder: `/`
+
+The Pages workflow also lives at
 [`.github/workflows/playground-pages.yml`](../.github/workflows/playground-pages.yml).
 It builds `packages/playground/dist` with `pnpm playground:build` and deploys
-that folder with the GitHub Pages Actions deployer.
+that folder with the GitHub Pages Actions deployer. Use it after GitHub Actions
+can start jobs for the account.
 
-In the GitHub repository settings, set Pages to deploy from GitHub Actions.
-Then push `main` or run the workflow by hand from the Actions tab.
+To switch from branch deploys to the workflow, set Pages to deploy from GitHub
+Actions in the repository settings. Then push `main` or run the workflow by hand
+from the Actions tab.
 
 The playground uses hash routing (`#playground`) so refreshes stay on the
 static `index.html` file that GitHub Pages serves.
